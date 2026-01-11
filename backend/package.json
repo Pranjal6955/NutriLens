@@ -8,10 +8,17 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server.js",
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "format": "prettier --write \"*.{ts,js,json}\" \"{routes,controllers,models,middlewares,config,utils}/**/*.{ts,js,json}\"",
+    "format:check": "prettier --check \"*.{ts,js,json}\" \"{routes,controllers,models,middlewares,config,utils}/**/*.{ts,js,json}\""
   },
   "dependencies": {
     "express": "^5.2.1",
     "mongoose": "^9.1.2"
+  },
+  "devDependencies": {
+    "prettier": "^3.7.4"
   }
 }
