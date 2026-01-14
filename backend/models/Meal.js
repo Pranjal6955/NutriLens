@@ -17,22 +17,42 @@ const MealSchema = new mongoose.Schema({
     type: String, // Full text analysis
     required: false,
   },
+  servingSize: {
+    type: String,
+    required: false,
+  },
+  macronutrients: {
+    protein: Number,
+    carbs: Number,
+    fat: Number,
+    fiber: Number,
+    sugar: Number,
+  },
+  micronutrients: {
+    sodium: Number,
+    cholesterol: Number,
+    vitaminA: Number,
+    vitaminC: Number,
+    calcium: Number,
+    iron: Number,
+  },
+  nutritionBreakdown: {
+    proteinPercent: Number,
+    carbsPercent: Number,
+    fatPercent: Number,
+  },
+  healthMetrics: {
+    healthScore: Number,
+    benefits: [String],
+    concerns: [String],
+  },
   calories: {
-    type: Number, // numeric value in kcal
+    type: Number,
     required: false,
   },
-  fat: {
-    type: Number, // numeric value in grams
-    required: false,
-  },
-  protein: {
-    type: Number, // numeric value in grams
-    required: false,
-  },
-  carbs: {
-    type: Number, // numeric value in grams
-    required: false,
-  },
+  fat: Number, // Keep for backward compatibility if needed, or rely on macronutrients.fat
+  protein: Number,
+  carbs: Number,
   recommendation: {
     type: String,
     required: false,

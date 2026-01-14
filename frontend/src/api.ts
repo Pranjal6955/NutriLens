@@ -5,11 +5,38 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 export interface MealData {
   _id: string;
   foodName: string;
+  servingSize?: string;
   isHealthy: boolean;
   calories: number;
-  fat: number;
-  protein: number;
-  carbs: number;
+  macronutrients: {
+    protein: number;
+    carbs: number;
+    fat: number;
+    fiber: number;
+    sugar: number;
+  };
+  micronutrients: {
+    sodium: number;
+    cholesterol: number;
+    vitaminA: number;
+    vitaminC: number;
+    calcium: number;
+    iron: number;
+  };
+  nutritionBreakdown: {
+    proteinPercent: number;
+    carbsPercent: number;
+    fatPercent: number;
+  };
+  healthMetrics: {
+    healthScore: number;
+    benefits: string[];
+    concerns: string[];
+  };
+  // flattened properties for backward compatibility or direct access if needed
+  fat?: number; // legacy
+  protein?: number; // legacy
+  carbs?: number; // legacy
   analysis: string;
   recommendation: string;
   imagePath: string;

@@ -6,6 +6,7 @@ export interface NutrientCardProps {
   value: number | string;
   unit: string;
   color: string;
+  textColor?: string;
 }
 
 export const NutrientCard: React.FC<NutrientCardProps> = ({
@@ -14,11 +15,12 @@ export const NutrientCard: React.FC<NutrientCardProps> = ({
   value,
   unit,
   color,
+  textColor,
 }) => (
   <div
     className={`glass p-4 rounded-2xl flex flex-col items-center justify-center space-y-2 border-b-4 ${color}`}
   >
-    <Icon className='w-6 h-6 text-current' />
+    <Icon className={`w-6 h-6 ${textColor || 'text-current'}`} />
     <span className='text-xs font-medium uppercase tracking-wider opacity-70'>{label}</span>
     <div className='flex items-baseline space-x-1'>
       <span className='text-2xl font-bold'>{value}</span>
