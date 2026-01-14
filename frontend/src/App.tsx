@@ -1,31 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {
-  Upload,
-  History,
-  Flame,
-  Droplets,
-  Dna,
-  Wheat,
-  CheckCircle2,
-  AlertCircle,
-  ChevronRight,
-  Loader2,
-  RefreshCcw,
-  Sparkles,
-} from 'lucide-react';
+import { Upload, Camera, History, ChevronRight, Loader2, RefreshCcw, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
+import { AnalysisResults } from './components/AnalysisResults';
+import { Reproduce } from './components/Reproduce';
 import { analyzeImage, getHistory, getImageUrl } from './api';
 import type { MealData } from './api';
-
-interface NutrientCardProps {
-  icon: React.ElementType;
-  label: string;
-  value: number | string;
-  unit: string;
-  color: string;
-}
 
 const App: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -35,6 +16,7 @@ const App: React.FC = () => {
   const [history, setHistory] = useState<MealData[]>([]);
   const [showHistory, setShowHistory] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetchHistory();
@@ -89,19 +71,6 @@ const App: React.FC = () => {
     setResult(null);
   };
 
-  const NutrientCard = ({ icon: Icon, label, value, unit, color }: NutrientCardProps) => (
-    <div
-      className={`glass p-4 rounded-2xl flex flex-col items-center justify-center space-y-2 border-b-4 ${color}`}
-    >
-      <Icon className='w-6 h-6 text-current' />
-      <span className='text-xs font-medium uppercase tracking-wider opacity-70'>{label}</span>
-      <div className='flex items-baseline space-x-1'>
-        <span className='text-2xl font-bold'>{value}</span>
-        <span className='text-xs opacity-70'>{unit}</span>
-      </div>
-    </div>
-  );
-
   return (
     <div className='min-h-screen pb-20 transition-colors duration-300'>
       {/* Navbar */}
@@ -116,32 +85,68 @@ const App: React.FC = () => {
           <AnimatePresence mode='wait'>
             {!preview ? (
               <motion.div
-                key='dropzone'
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                onClick={() => fileInputRef.current?.click()}
-                className='group relative cursor-pointer'
+                key='actions'
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className='grid md:grid-cols-2 gap-6'
               >
-                <div className='absolute -inset-1 bg-gradient-to-r from-brand-primary to-brand-secondary rounded-3xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200'></div>
-                <div className='relative glass rounded-3xl border-2 border-dashed border-gray-300 dark:border-gray-700 p-12 flex flex-col items-center space-y-4 hover:border-brand-primary/50 transition-colors'>
-                  <div className='p-4 bg-black/5 dark:bg-white/5 rounded-2xl group-hover:scale-110 transition-transform'>
-                    <Upload className='w-10 h-10 text-brand-primary' />
+                {/* Upload Card */}
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => fileInputRef.current?.click()}
+                  className='group relative cursor-pointer'
+                >
+                  <div className='relative h-64 bg-transparent rounded-3xl p-8 flex flex-col items-center justify-center space-y-4 border-5 border-gray-400 dark:border-white/10 hover:border-brand-primary/50 transition-colors'>
+                    <div className='p-4 bg-brand-primary/10 rounded-2xl group-hover:bg-brand-primary/20 transition-colors'>
+                      <Upload className='w-10 h-10 text-brand-primary' />
+                    </div>
+                    <div className='text-center'>
+                      <h3 className='text-xl font-bold'>Upload Image</h3>
+                      <p className='text-sm text-gray-500 dark:text-gray-400 mt-2'>
+                        Select from your gallery
+                      </p>
+                    </div>
                   </div>
-                  <div className='text-center'>
-                    <p className='text-xl font-semibold'>Drop your meal image here</p>
-                    <p className='text-gray-600 dark:text-gray-400 mt-1'>
-                      or click to browse from files
-                    </p>
+                </motion.div>
+
+                {/* Camera Card */}
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => cameraInputRef.current?.click()}
+                  className='group relative cursor-pointer'
+                >
+                  <div className='relative h-64 bg-transparent rounded-3xl p-8 flex flex-col items-center justify-center space-y-4 border-5 border-gray-400 dark:border-white/10 hover:border-brand-accent/50 transition-colors'>
+                    <div className='p-4 bg-brand-accent/10 rounded-2xl group-hover:bg-brand-accent/20 transition-colors'>
+                      <Camera className='w-10 h-10 text-brand-accent' />
+                    </div>
+                    <div className='text-center'>
+                      <h3 className='text-xl font-bold'>Take Photo</h3>
+                      <p className='text-sm text-gray-500 dark:text-gray-400 mt-2'>
+                        Capture a fresh snap
+                      </p>
+                    </div>
                   </div>
-                  <input
-                    type='file'
-                    ref={fileInputRef}
-                    onChange={handleFileChange}
-                    className='hidden'
-                    accept='image/*'
-                  />
-                </div>
+                </motion.div>
+
+                {/* Hidden Inputs */}
+                <input
+                  type='file'
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                  className='hidden'
+                  accept='image/*'
+                />
+                <input
+                  type='file'
+                  ref={cameraInputRef}
+                  onChange={handleFileChange}
+                  className='hidden'
+                  accept='image/*'
+                  capture='environment'
+                />
               </motion.div>
             ) : (
               <motion.div
@@ -156,9 +161,20 @@ const App: React.FC = () => {
                     alt='Preview'
                     className='w-full h-full object-cover rounded-2xl'
                   />
+                  {loading && (
+                    <motion.div
+                      initial={{ top: '0%' }}
+                      animate={{ top: ['0%', '100%', '0%'] }}
+                      transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+                      className='absolute left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand-primary to-transparent z-10 shadow-[0_0_15px_rgba(0,255,128,0.5)]'
+                    />
+                  )}
+                  {loading && (
+                    <div className='absolute inset-0 bg-black/20 backdrop-blur-[1px] z-0' />
+                  )}
                   <button
                     onClick={reset}
-                    className='absolute top-4 right-4 p-2 bg-black/50 backdrop-blur-md rounded-full text-white hover:bg-black/70 transition-colors'
+                    className='absolute top-4 right-4 p-2 bg-black/50 backdrop-blur-md rounded-full text-white hover:bg-black/70 transition-colors z-20'
                   >
                     <RefreshCcw className='w-5 h-5' />
                   </button>
@@ -175,9 +191,11 @@ const App: React.FC = () => {
                 )}
 
                 {loading && (
-                  <div className='w-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 py-4 rounded-2xl font-bold text-lg flex items-center justify-center space-x-3'>
-                    <Loader2 className='w-5 h-5 animate-spin text-brand-primary' />
-                    <span className='animate-pulse'>AI is scanning your plate...</span>
+                  <div className='w-full bg-black border border-white/10 py-6 rounded-2xl font-bold text-lg flex items-center justify-center space-x-3 text-white shadow-xl shadow-brand-primary/10'>
+                    <Loader2 className='w-6 h-6 animate-spin text-brand-primary' />
+                    <span className='animate-pulse tracking-wide'>
+                      AI is scanning your plate...
+                    </span>
                   </div>
                 )}
               </motion.div>
@@ -186,86 +204,11 @@ const App: React.FC = () => {
 
           {/* Results Section */}
           <AnimatePresence>
-            {result && !loading && (
-              <motion.div
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                className='space-y-8'
-              >
-                <div className='flex flex-col md:flex-row md:items-center justify-between gap-4'>
-                  <div>
-                    <h2 className='text-3xl font-bold'>{result.foodName}</h2>
-                    <div className='flex items-center mt-1 space-x-2'>
-                      {result.isHealthy ? (
-                        <span className='flex items-center text-brand-primary text-sm font-medium'>
-                          <CheckCircle2 className='w-4 h-4 mr-1' /> Healthy Choice
-                        </span>
-                      ) : (
-                        <span className='flex items-center text-red-400 text-sm font-medium'>
-                          <AlertCircle className='w-4 h-4 mr-1' /> Indulgent
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <div className='text-gray-600 dark:text-gray-400 text-sm'>
-                    Analyzed on {new Date(result.createdAt).toLocaleDateString()}
-                  </div>
-                </div>
-
-                {/* Macro Stats */}
-                <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
-                  <NutrientCard
-                    icon={Flame}
-                    label='Calories'
-                    value={result.calories}
-                    unit='kcal'
-                    color='border-orange-500'
-                  />
-                  <NutrientCard
-                    icon={Dna}
-                    label='Protein'
-                    value={result.protein}
-                    unit='g'
-                    color='border-blue-500'
-                  />
-                  <NutrientCard
-                    icon={Wheat}
-                    label='Carbs'
-                    value={result.carbs}
-                    unit='g'
-                    color='border-yellow-500'
-                  />
-                  <NutrientCard
-                    icon={Droplets}
-                    label='Fat'
-                    value={result.fat}
-                    unit='g'
-                    color='border-pink-500'
-                  />
-                </div>
-
-                <div className='grid md:grid-cols-2 gap-6'>
-                  <div className='glass p-6 rounded-3xl space-y-3'>
-                    <h3 className='font-bold text-lg flex items-center text-brand-primary'>
-                      <Sparkles className='w-5 h-5 mr-2' /> Analysis
-                    </h3>
-                    <p className='text-gray-600 dark:text-gray-400 leading-relaxed capitalize'>
-                      {result.analysis}
-                    </p>
-                  </div>
-                  <div className='glass p-6 rounded-3xl space-y-3'>
-                    <h3 className='font-bold text-lg flex items-center text-brand-secondary'>
-                      <ChevronRight className='w-5 h-5 mr-2' /> Recommendation
-                    </h3>
-                    <p className='text-gray-600 dark:text-gray-400 leading-relaxed capitalize'>
-                      {result.recommendation}
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-            )}
+            {result && !loading && <AnalysisResults result={result} />}
           </AnimatePresence>
         </div>
+
+        <Reproduce />
 
         {/* History Sidebar/Section */}
         <AnimatePresence>
