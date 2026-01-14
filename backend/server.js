@@ -15,7 +15,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
-    fs.mkdirSync(uploadsDir);
+  fs.mkdirSync(uploadsDir);
 }
 
 // Database Connection
@@ -28,10 +28,10 @@ const analyzeRoutes = require('./routes/analyze');
 app.use('/api', analyzeRoutes);
 
 app.get('/', (req, res) => {
-    res.send('NutriLens Backend is running');
+  res.send('NutriLens Backend is running');
 });
 
 // Start Server
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

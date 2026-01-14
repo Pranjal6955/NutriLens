@@ -3,7 +3,6 @@ const router = express.Router();
 const multer = require('multer');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const fs = require('fs');
-const path = require('path');
 const Meal = require('../models/Meal');
 
 // Configure Multer
@@ -19,7 +18,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // Initialize Gemini
-const API_KEY = process.env.GEMINI_API_KEY || 'AIzaSyBfa0NtuzquSlyTNblGQ57CDovteFA9dQ0';
+const API_KEY = process.env.GEMINI_API_KEY;
 const genAI = new GoogleGenerativeAI(API_KEY);
 const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
@@ -64,7 +63,10 @@ router.post('/analyze', upload.single('image'), async (req, res) => {
         console.log('Gemini Raw Response:', text);
 
         // Clean up JSON string if it contains markdown code blocks
-        text = text.replace(/```json/g, '').replace(/```/g, '').trim();
+        text = text
+            .replace(/```json/g, '')
+            .replace(/```/g, '')
+            .trim();
 
         let analysisData;
         try {
@@ -93,7 +95,9 @@ router.post('/analyze', upload.single('image'), async (req, res) => {
         });
     } catch (error) {
         console.error('Error processing image:', error);
-        res.status(500).json({ error: 'Internal server error', details: error.message });
+        res
+            .status(500)
+            .json({ error: 'Internal server error', details: error.message });
     }
 });
 
