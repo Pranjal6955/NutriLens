@@ -15,6 +15,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ThemeToggle } from './components/ThemeToggle';
 import { analyzeImage, getHistory, getImageUrl } from './api';
 import type { MealData } from './api';
 
@@ -92,34 +93,38 @@ const App: React.FC = () => {
     <div
       className={`glass p-4 rounded-2xl flex flex-col items-center justify-center space-y-2 border-b-4 ${color}`}
     >
-      <Icon className='w-6 h-6 text-white' />
-      <span className='text-gray-400 text-xs font-medium uppercase tracking-wider'>{label}</span>
+      <Icon className='w-6 h-6 text-current' />
+      <span className='text-xs font-medium uppercase tracking-wider opacity-70'>{label}</span>
       <div className='flex items-baseline space-x-1'>
         <span className='text-2xl font-bold'>{value}</span>
-        <span className='text-gray-500 text-xs'>{unit}</span>
+        <span className='text-xs opacity-70'>{unit}</span>
       </div>
     </div>
   );
 
   return (
-    <div className='min-h-screen pb-20'>
+    <div className='min-h-screen pb-20 transition-colors duration-300'>
       {/* Navbar */}
-      <nav className='fixed top-0 w-full z-50 glass border-b border-white/5'>
+      <nav className='fixed top-0 w-full z-50 glass'>
         <div className='max-w-7xl mx-auto px-4 h-16 flex items-center justify-between'>
           <div className='flex items-center space-x-2'>
-            <div className='bg-brand-primary p-2 rounded-lg'>
+            <div className='bg-brand-primary p-2 rounded-lg transition-colors'>
               <Camera className='w-5 h-5 text-white' />
             </div>
             <span className='text-xl font-bold tracking-tight'>
-              Nutri<span className='text-brand-primary'>Lens</span>
+              Nutri<span className='text-brand-primary transition-colors'>Lens</span>
             </span>
           </div>
-          <button
-            onClick={() => setShowHistory(!showHistory)}
-            className='p-2 hover:bg-white/5 rounded-full transition-colors'
-          >
-            <History className='w-6 h-6 text-gray-400 hover:text-white' />
-          </button>
+          <div className='flex items-center space-x-4'>
+            <ThemeToggle />
+            <button
+              onClick={() => setShowHistory(!showHistory)}
+              className='p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-colors'
+              aria-label='History'
+            >
+              <History className='w-6 h-6 text-gray-600 dark:text-gray-400 hover:text-brand-primary transition-colors' />
+            </button>
+          </div>
         </div>
       </nav>
 
@@ -134,7 +139,7 @@ const App: React.FC = () => {
             <h1 className='text-5xl md:text-7xl font-extrabold tracking-tight'>
               Know What You <span className='gradient-text'>Eat.</span>
             </h1>
-            <p className='text-gray-400 text-lg md:text-xl max-w-2xl mx-auto'>
+            <p className='text-lg md:text-xl max-w-2xl mx-auto opacity-70'>
               Snap a photo of your meal and get instant nutritional insights powered by advanced AI.
               Track calories, macros, and get personalized recommendations.
             </p>
@@ -154,13 +159,15 @@ const App: React.FC = () => {
                 className='group relative cursor-pointer'
               >
                 <div className='absolute -inset-1 bg-gradient-to-r from-brand-primary to-brand-secondary rounded-3xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200'></div>
-                <div className='relative glass rounded-3xl border-2 border-dashed border-gray-700 p-12 flex flex-col items-center space-y-4 hover:border-brand-primary/50 transition-colors'>
-                  <div className='p-4 bg-white/5 rounded-2xl group-hover:scale-110 transition-transform'>
+                <div className='relative glass rounded-3xl border-2 border-dashed border-gray-300 dark:border-gray-700 p-12 flex flex-col items-center space-y-4 hover:border-brand-primary/50 transition-colors'>
+                  <div className='p-4 bg-black/5 dark:bg-white/5 rounded-2xl group-hover:scale-110 transition-transform'>
                     <Upload className='w-10 h-10 text-brand-primary' />
                   </div>
                   <div className='text-center'>
                     <p className='text-xl font-semibold'>Drop your meal image here</p>
-                    <p className='text-gray-400 mt-1'>or click to browse from files</p>
+                    <p className='text-gray-600 dark:text-gray-400 mt-1'>
+                      or click to browse from files
+                    </p>
                   </div>
                   <input
                     type='file'
@@ -203,7 +210,7 @@ const App: React.FC = () => {
                 )}
 
                 {loading && (
-                  <div className='w-full bg-white/5 border border-white/10 py-4 rounded-2xl font-bold text-lg flex items-center justify-center space-x-3'>
+                  <div className='w-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 py-4 rounded-2xl font-bold text-lg flex items-center justify-center space-x-3'>
                     <Loader2 className='w-5 h-5 animate-spin text-brand-primary' />
                     <span className='animate-pulse'>AI is scanning your plate...</span>
                   </div>
@@ -235,7 +242,7 @@ const App: React.FC = () => {
                       )}
                     </div>
                   </div>
-                  <div className='text-gray-400 text-sm'>
+                  <div className='text-gray-600 dark:text-gray-400 text-sm'>
                     Analyzed on {new Date(result.createdAt).toLocaleDateString()}
                   </div>
                 </div>
@@ -277,13 +284,15 @@ const App: React.FC = () => {
                     <h3 className='font-bold text-lg flex items-center text-brand-primary'>
                       <Sparkles className='w-5 h-5 mr-2' /> Analysis
                     </h3>
-                    <p className='text-gray-400 leading-relaxed capitalize'>{result.analysis}</p>
+                    <p className='text-gray-600 dark:text-gray-400 leading-relaxed capitalize'>
+                      {result.analysis}
+                    </p>
                   </div>
                   <div className='glass p-6 rounded-3xl space-y-3'>
                     <h3 className='font-bold text-lg flex items-center text-brand-secondary'>
                       <ChevronRight className='w-5 h-5 mr-2' /> Recommendation
                     </h3>
-                    <p className='text-gray-400 leading-relaxed capitalize'>
+                    <p className='text-gray-600 dark:text-gray-400 leading-relaxed capitalize'>
                       {result.recommendation}
                     </p>
                   </div>
@@ -309,7 +318,7 @@ const App: React.FC = () => {
                 </h2>
                 <button
                   onClick={() => setShowHistory(false)}
-                  className='p-2 hover:bg-white/5 rounded-full'
+                  className='p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-full'
                 >
                   <ChevronRight className='w-6 h-6' />
                 </button>
@@ -317,7 +326,7 @@ const App: React.FC = () => {
 
               <div className='space-y-4'>
                 {history.length === 0 ? (
-                  <div className='text-center py-20 text-gray-500'>
+                  <div className='text-center py-20 text-gray-500 dark:text-gray-400'>
                     <p>No meals analyzed yet.</p>
                   </div>
                 ) : (
@@ -340,11 +349,11 @@ const App: React.FC = () => {
                       </div>
                       <div className='flex-1 min-w-0'>
                         <p className='font-bold truncate'>{meal.foodName}</p>
-                        <p className='text-xs text-gray-500'>
+                        <p className='text-xs text-gray-500 dark:text-gray-400'>
                           {meal.calories} kcal • {new Date(meal.createdAt).toLocaleDateString()}
                         </p>
                       </div>
-                      <ChevronRight className='w-4 h-4 text-gray-600 group-hover:text-white transition-colors' />
+                      <ChevronRight className='w-4 h-4 text-gray-500 dark:text-gray-600 group-hover:text-current transition-colors' />
                     </div>
                   ))
                 )}
