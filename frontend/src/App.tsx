@@ -70,7 +70,9 @@ const App: React.FC = () => {
       fetchHistory();
     } catch (err) {
       console.error('Analysis failed', err);
-      alert('Analysis failed. Please try again.');
+      const errorMessage =
+        err instanceof Error ? err.message : typeof err === 'string' ? err : 'An unknown error occurred.';
+      alert(`Analysis failed: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
