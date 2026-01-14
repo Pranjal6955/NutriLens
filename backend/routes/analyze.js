@@ -48,7 +48,7 @@ const upload = multer({
 // Initialize Gemini
 const API_KEY = process.env.GEMINI_API_KEY;
 const genAI = new GoogleGenerativeAI(API_KEY);
-const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+const model = genAI.getGenerativeModel({ model: 'gemini-flash-latest' });
 
 // Analyze Route
 router.post('/analyze', upload.single('image'), async (req, res) => {
@@ -64,18 +64,49 @@ router.post('/analyze', upload.single('image'), async (req, res) => {
     const imageBuffer = await fs.promises.readFile(imagePath);
     const imageBase64 = imageBuffer.toString('base64');
 
-    const prompt = `Analyze this food image. Identify the food. Determine if it is healthy. Estimate calories, fat, protein, carbs. Provide a short analysis and a recommendation on what to eat next.
-    Return ONLY valid JSON in the following format (calories, fat, protein, carbs MUST be numbers):
+    const prompt = `Analyze this food image thoroughly. Identify the food item(s), estimate the quantity (e.g., number of pieces, number of bowls), and provide a complete nutritional breakdown.
+
+    Return ONLY valid JSON in the following format (all numeric values MUST be numbers, not strings):
     {
       "foodName": "...",
+      "servingSize": "...",
       "isHealthy": true/false,
       "calories": 0,
-      "fat": 0,
-      "protein": 0,
-      "carbs": 0,
-      "analysis": "...",
-      "recommendation": "..."
-    }`;
+      "macronutrients": {
+        "protein": 0,
+        "carbs": 0,
+        "fat": 0,
+        "fiber": 0,
+        "sugar": 0
+      },
+      "micronutrients": {
+        "sodium": 0,
+        "cholesterol": 0,
+        "vitaminA": 0,
+        "vitaminC": 0,
+        "calcium": 0,
+        "iron": 0
+      },
+      "nutritionBreakdown": {
+        "proteinPercent": 0,
+        "carbsPercent": 0,
+        "fatPercent": 0
+      },
+      "healthMetrics": {
+        "healthScore": 0,
+        "benefits": ["...", "..."],
+        "concerns": ["...", "..."]
+      },
+      "analysis": "Detailed analysis of the food's nutritional value, preparation method, and health implications (2-3 sentences)",
+      "recommendation": "What to eat next to balance this meal nutritionally (be specific with food suggestions)"
+    }
+
+    Notes:
+    - All gram values should be in grams (g)
+    - Vitamins and minerals in milligrams (mg) or appropriate units
+    - Percentages should be whole numbers (0-100)
+    - healthScore should be 0-100
+    - Be accurate with portion size estimation (e.g., "2 slices", "1 bowl", "3 pieces")`;
 
     const part = {
       inlineData: {
