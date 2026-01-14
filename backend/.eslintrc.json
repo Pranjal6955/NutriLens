@@ -1,12 +1,7 @@
 {
   "parser": "@typescript-eslint/parser",
-  "extends": [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended"
-  ],
-  "plugins": [
-    "@typescript-eslint"
-  ],
+  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
+  "plugins": ["@typescript-eslint"],
   "parserOptions": {
     "ecmaVersion": 2022,
     "sourceType": "module"
@@ -25,9 +20,5 @@
     "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/no-var-requires": "off"
   },
-  "ignorePatterns": [
-    "node_modules",
-    "dist",
-    "build"
-  ]
+  "ignorePatterns": ["node_modules", "dist", "build"]
 }
