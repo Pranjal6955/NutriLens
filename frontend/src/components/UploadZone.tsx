@@ -13,6 +13,7 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onFileChange }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -27,6 +28,7 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onFileChange }) => {
         video: { facingMode: 'environment' },
       });
       setStream(mediaStream);
+      streamRef.current = mediaStream;
       setIsCameraOpen(true);
     } catch (err) {
       console.error('Camera access denied or not available:', err);
@@ -39,6 +41,7 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onFileChange }) => {
     if (stream) {
       stream.getTracks().forEach((track) => track.stop());
       setStream(null);
+      streamRef.current = null;
     }
     setIsCameraOpen(false);
   };
@@ -79,13 +82,14 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onFileChange }) => {
   }, [isCameraOpen, stream]);
 
   // Cleanup on unmount
+  // Cleanup on unmount
   useEffect(() => {
     return () => {
-      if (stream) {
-        stream.getTracks().forEach((track) => track.stop());
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
       }
     };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
