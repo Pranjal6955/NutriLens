@@ -208,7 +208,7 @@ const App: React.FC = () => {
           </AnimatePresence>
         </div>
 
-        <Reproduce />
+        {!preview && !result && <Reproduce />}
 
         {/* History Sidebar/Section */}
         <AnimatePresence>
