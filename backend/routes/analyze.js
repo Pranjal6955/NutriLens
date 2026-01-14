@@ -3,19 +3,47 @@ const router = express.Router();
 const multer = require('multer');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const fs = require('fs');
+const path = require('path');
 const Meal = require('../models/Meal');
+
+const crypto = require('crypto');
 
 // Configure Multer
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/');
+    cb(null, path.join(__dirname, '../uploads'));
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname);
+    const uniqueSuffix =
+      Date.now() + '-' + crypto.randomBytes(4).toString('hex');
+    const sanitizedName = file.originalname.replace(/[^a-zA-Z0-9.]/g, '_');
+    cb(null, uniqueSuffix + '-' + sanitizedName);
   },
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5 MB max file size
+    files: 1, // only one file expected for this route
+  },
+  fileFilter: (req, file, cb) => {
+    const allowedMimeTypes = [
+      'image/jpeg',
+      'image/png',
+      'image/gif',
+      'image/webp',
+    ];
+    if (!allowedMimeTypes.includes(file.mimetype)) {
+      return cb(
+        new Error(
+          'Invalid file type. Only JPEG, PNG, GIF, and WEBP are allowed.'
+        )
+      );
+    }
+    cb(null, true);
+  },
+});
 
 // Initialize Gemini
 const API_KEY = process.env.GEMINI_API_KEY;
@@ -32,19 +60,19 @@ router.post('/analyze', upload.single('image'), async (req, res) => {
     const imagePath = req.file.path;
     const mimeType = req.file.mimetype;
 
-    // Read image file
-    const imageBuffer = fs.readFileSync(imagePath);
+    // Read image file asynchronously to avoid blocking the event loop
+    const imageBuffer = await fs.promises.readFile(imagePath);
     const imageBase64 = imageBuffer.toString('base64');
 
     const prompt = `Analyze this food image. Identify the food. Determine if it is healthy. Estimate calories, fat, protein, carbs. Provide a short analysis and a recommendation on what to eat next.
-    Return ONLY valid JSON in the following format:
+    Return ONLY valid JSON in the following format (calories, fat, protein, carbs MUST be numbers):
     {
       "foodName": "...",
       "isHealthy": true/false,
-      "calories": "...",
-        "fat": "...",
-      "protein": "...",
-      "carbs": "...",
+      "calories": 0,
+      "fat": 0,
+      "protein": 0,
+      "carbs": 0,
       "analysis": "...",
       "recommendation": "..."
     }`;
@@ -95,17 +123,46 @@ router.post('/analyze', upload.single('image'), async (req, res) => {
     });
   } catch (error) {
     console.error('Error processing image:', error);
-    res
-      .status(500)
-      .json({ error: 'Internal server error', details: error.message });
+
+    // Clean up uploaded file on error
+    if (req.file && req.file.path) {
+      try {
+        await fs.promises.unlink(req.file.path);
+      } catch (unlinkError) {
+        console.error('Failed to delete file after error:', unlinkError);
+      }
+    }
+
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
 router.get('/history', async (req, res) => {
   try {
-    const meals = await Meal.find().sort({ createdAt: -1 });
-    res.json(meals);
+    const { limit, skip } = req.query;
+    const parsedLimit = parseInt(limit, 10) || 20;
+    const parsedSkip = parseInt(skip, 10) || 0;
+
+    // Cap limit to prevent excessive data transfer
+    const finalLimit = Math.min(parsedLimit, 100);
+
+    const meals = await Meal.find()
+      .sort({ createdAt: -1 })
+      .skip(parsedSkip)
+      .limit(finalLimit);
+
+    const total = await Meal.countDocuments();
+
+    res.json({
+      data: meals,
+      pagination: {
+        total,
+        limit: finalLimit,
+        skip: parsedSkip,
+      },
+    });
   } catch (error) {
+    console.error('Error fetching history:', error);
     res.status(500).json({ error: 'Failed to fetch history' });
   }
 });

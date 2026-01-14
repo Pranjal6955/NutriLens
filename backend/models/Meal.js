@@ -18,19 +18,19 @@ const MealSchema = new mongoose.Schema({
     required: false,
   },
   calories: {
-    type: String, // Approximate calories
+    type: Number, // numeric value in kcal
     required: false,
   },
   fat: {
-    type: String,
+    type: Number, // numeric value in grams
     required: false,
   },
   protein: {
-    type: String,
+    type: Number, // numeric value in grams
     required: false,
   },
   carbs: {
-    type: String,
+    type: Number, // numeric value in grams
     required: false,
   },
   recommendation: {
