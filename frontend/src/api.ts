@@ -73,6 +73,9 @@ export const getHistory = async (limit = 20, skip = 0): Promise<HistoryResponse>
 };
 
 export const getImageUrl = (imagePath: string) => {
+  if (imagePath.startsWith('http')) {
+    return imagePath;
+  }
   const baseUrl = API_URL.replace('/api', '');
   return `${baseUrl}/uploads/${imagePath}`;
 };

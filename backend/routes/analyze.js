@@ -2,24 +2,18 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
-const fs = require('fs');
-const path = require('path');
+const cloudinary = require('cloudinary').v2;
 const Meal = require('../models/Meal');
 
-const crypto = require('crypto');
-
-// Configure Multer
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, '../uploads'));
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix =
-      Date.now() + '-' + crypto.randomBytes(4).toString('hex');
-    const sanitizedName = file.originalname.replace(/[^a-zA-Z0-9.]/g, '_');
-    cb(null, uniqueSuffix + '-' + sanitizedName);
-  },
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
+
+// Configure Multer (Memory Storage)
+const storage = multer.memoryStorage();
 
 const upload = multer({
   storage: storage,
@@ -57,12 +51,28 @@ router.post('/analyze', upload.single('image'), async (req, res) => {
       return res.status(400).json({ error: 'No image uploaded' });
     }
 
-    const imagePath = req.file.path;
     const mimeType = req.file.mimetype;
-
-    // Read image file asynchronously to avoid blocking the event loop
-    const imageBuffer = await fs.promises.readFile(imagePath);
+    const imageBuffer = req.file.buffer;
     const imageBase64 = imageBuffer.toString('base64');
+
+    // Upload to Cloudinary
+    const uploadToCloudinary = () => {
+      return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: 'nutrilens' },
+          (error, result) => {
+            if (result) {
+              resolve(result.secure_url);
+            } else {
+              reject(error);
+            }
+          }
+        );
+        stream.end(imageBuffer);
+      });
+    };
+
+    const imageUrl = await uploadToCloudinary();
 
     const prompt = `Analyze this food image thoroughly. Identify the food item(s), estimate the quantity (e.g., number of pieces, number of bowls), and provide a complete nutritional breakdown.
 
@@ -142,7 +152,7 @@ router.post('/analyze', upload.single('image'), async (req, res) => {
 
     // Save to Database
     const newMeal = new Meal({
-      imagePath: req.file.filename, // Store filename, access via /uploads/filename
+      imagePath: imageUrl,
       ...analysisData,
     });
 
@@ -154,16 +164,6 @@ router.post('/analyze', upload.single('image'), async (req, res) => {
     });
   } catch (error) {
     console.error('Error processing image:', error);
-
-    // Clean up uploaded file on error
-    if (req.file && req.file.path) {
-      try {
-        await fs.promises.unlink(req.file.path);
-      } catch (unlinkError) {
-        console.error('Failed to delete file after error:', unlinkError);
-      }
-    }
-
     res.status(500).json({ error: 'Internal server error' });
   }
 });
