@@ -81,7 +81,7 @@ export const AnalysisResults: React.FC<AnalysisResultsProps> = ({ result }) => {
               label='Calories'
               value={result.calories}
               unit='kcal'
-              color='border-orange-500'
+              color='hover:!border-orange-500'
               textColor='text-orange-500'
             />
             <NutrientCard
@@ -89,7 +89,7 @@ export const AnalysisResults: React.FC<AnalysisResultsProps> = ({ result }) => {
               label='Protein'
               value={protein}
               unit='g'
-              color='border-blue-500'
+              color='hover:!border-blue-500'
               textColor='text-blue-500'
             />
             <NutrientCard
@@ -97,7 +97,7 @@ export const AnalysisResults: React.FC<AnalysisResultsProps> = ({ result }) => {
               label='Carbs'
               value={carbs}
               unit='g'
-              color='border-yellow-500'
+              color='hover:!border-yellow-500'
               textColor='text-yellow-500'
             />
             <NutrientCard
@@ -105,14 +105,14 @@ export const AnalysisResults: React.FC<AnalysisResultsProps> = ({ result }) => {
               label='Fat'
               value={fat}
               unit='g'
-              color='border-pink-500'
+              color='hover:!border-pink-500'
               textColor='text-pink-500'
             />
           </div>
 
           {/* Micronutrients if available */}
           {result.micronutrients && (
-            <div className='glass p-6 rounded-3xl'>
+            <div className='glass p-6 rounded-3xl hover:!border-white transition-colors duration-300'>
               <h3 className='font-bold text-lg mb-4'>Micronutrients</h3>
               <div className='grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm'>
                 {Object.entries(result.micronutrients).map(([key, value]) => (
@@ -135,7 +135,7 @@ export const AnalysisResults: React.FC<AnalysisResultsProps> = ({ result }) => {
 
         {/* Pie Chart - Right Side - Spans 1 col */}
         {hasMacroData && (
-          <div className='glass p-4 rounded-3xl flex flex-col items-center justify-center min-h-[300px]'>
+          <div className='glass p-4 rounded-3xl flex flex-col items-center justify-center min-h-[300px] hover:!border-white transition-colors duration-300'>
             <h3 className='font-bold text-lg mb-2'>Macro Distribution</h3>
             <div className='w-full h-[250px]'>
               <ResponsiveContainer width='100%' height='100%'>
@@ -169,47 +169,59 @@ export const AnalysisResults: React.FC<AnalysisResultsProps> = ({ result }) => {
       </div>
 
       <div className='grid md:grid-cols-2 gap-6'>
-        <div className='glass p-6 rounded-3xl space-y-3'>
+        {/* Analysis Card */}
+        <div className='glass p-6 rounded-3xl space-y-3 hover:!border-brand-primary transition-all duration-300'>
           <h3 className='font-bold text-lg flex items-center text-brand-primary'>
             <Sparkles className='w-5 h-5 mr-2' /> Analysis
           </h3>
           <p className='text-gray-600 dark:text-gray-400 leading-relaxed capitalize'>
             {result.analysis}
           </p>
-          {result.healthMetrics?.benefits && result.healthMetrics.benefits.length > 0 && (
-            <div className='mt-4'>
-              <h4 className='font-semibold text-green-600 flex items-center mb-2'>
-                <ThumbsUp className='w-4 h-4 mr-2' /> Benefits
-              </h4>
-              <ul className='list-disc list-inside text-sm text-gray-500 space-y-1'>
-                {result.healthMetrics.benefits.map((benefit, i) => (
-                  <li key={i}>{benefit}</li>
-                ))}
-              </ul>
-            </div>
-          )}
         </div>
 
-        <div className='glass p-6 rounded-3xl space-y-3'>
+        {/* Recommendation Card */}
+        <div className='glass p-6 rounded-3xl space-y-3 hover:!border-brand-secondary transition-all duration-300'>
           <h3 className='font-bold text-lg flex items-center text-brand-secondary'>
             <ChevronRight className='w-5 h-5 mr-2' /> Recommendation
           </h3>
           <p className='text-gray-600 dark:text-gray-400 leading-relaxed capitalize'>
             {result.recommendation}
           </p>
-          {result.healthMetrics?.concerns && result.healthMetrics.concerns.length > 0 && (
-            <div className='mt-4'>
-              <h4 className='font-semibold text-red-500 flex items-center mb-2'>
-                <ThumbsDown className='w-4 h-4 mr-2' /> Concerns
-              </h4>
-              <ul className='list-disc list-inside text-sm text-gray-500 space-y-1'>
-                {result.healthMetrics.concerns.map((concern, i) => (
-                  <li key={i}>{concern}</li>
-                ))}
-              </ul>
-            </div>
-          )}
         </div>
+
+        {/* Benefits Card */}
+        {result.healthMetrics?.benefits && result.healthMetrics.benefits.length > 0 && (
+          <div className='glass p-6 rounded-3xl space-y-3 border-l-4 border-l-green-500 hover:!border-green-500 transition-all duration-300'>
+            <h3 className='font-bold text-lg flex items-center text-green-600'>
+              <ThumbsUp className='w-5 h-5 mr-2' /> Benefits
+            </h3>
+            <ul className='space-y-2'>
+              {result.healthMetrics.benefits.map((benefit, i) => (
+                <li key={i} className='flex items-start text-sm text-gray-600 dark:text-gray-400'>
+                  <CheckCircle2 className='w-4 h-4 mr-2 text-green-500 mt-0.5 flex-shrink-0' />
+                  <span>{benefit}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* Concerns Card */}
+        {result.healthMetrics?.concerns && result.healthMetrics.concerns.length > 0 && (
+          <div className='glass p-6 rounded-3xl space-y-3 border-l-4 border-l-red-500 hover:!border-red-500 transition-all duration-300'>
+            <h3 className='font-bold text-lg flex items-center text-red-500'>
+              <ThumbsDown className='w-5 h-5 mr-2' /> Concerns
+            </h3>
+            <ul className='space-y-2'>
+              {result.healthMetrics.concerns.map((concern, i) => (
+                <li key={i} className='flex items-start text-sm text-gray-600 dark:text-gray-400'>
+                  <AlertCircle className='w-4 h-4 mr-2 text-red-500 mt-0.5 flex-shrink-0' />
+                  <span>{concern}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </motion.div>
   );

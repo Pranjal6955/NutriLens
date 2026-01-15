@@ -18,7 +18,7 @@ export const NutrientCard: React.FC<NutrientCardProps> = ({
   textColor,
 }) => (
   <div
-    className={`glass p-4 rounded-2xl flex flex-col items-center justify-center space-y-2 border-b-4 ${color}`}
+    className={`glass p-4 rounded-2xl flex flex-col items-center justify-center space-y-2 border transition-colors duration-300 ${color}`}
   >
     <Icon className={`w-6 h-6 ${textColor || 'text-current'}`} />
     <span className='text-xs font-medium uppercase tracking-wider opacity-70'>{label}</span>

@@ -12,8 +12,8 @@
   /* Light Mode Defaults */
   --bg-color: #ffffff;
   --text-color: #0f172a;
-  --glass-bg: rgba(255, 255, 255, 0.8);
-  --glass-border: rgba(0, 0, 0, 0.1);
+  --glass-bg: rgba(255, 255, 255, 0.15);
+  --glass-border: rgba(0, 0, 0, 0.08);
   --primary-color: #00a376;
   --scrollbar-track: #f1f5f9;
   --scrollbar-thumb: #cbd5e1;
@@ -23,8 +23,8 @@
 :root[data-theme='dark'] {
   --bg-color: #000000;
   --text-color: #f8fafc;
-  --glass-bg: rgba(30, 41, 59, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-bg: rgba(30, 41, 59, 0.3);
+  --glass-border: rgba(255, 255, 255, 0.15);
   --primary-color: #00a376;
   --scrollbar-track: #0f172a;
   --scrollbar-thumb: #1e293b;
@@ -43,8 +43,8 @@ body {
 
 .glass {
   background: var(--glass-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--glass-border);
   transition:
     background-color 0.3s ease,

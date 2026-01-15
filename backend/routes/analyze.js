@@ -193,7 +193,6 @@ router.get('/history', async (req, res) => {
       },
     });
   } catch (error) {
-
     console.error('Error fetching history:', error);
     res.status(500).json({ error: 'Failed to fetch history' });
   }
@@ -210,4 +209,3 @@ router.delete('/history', async (req, res) => {
 });
 
 module.exports = router;
-
