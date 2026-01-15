@@ -60,9 +60,9 @@ ${
   return (
     <button
       onClick={handleExport}
-      className='flex items-center bg-white/10 hover:bg-white/20 text-brand-primary px-4 py-2 rounded-xl transition-colors text-sm font-medium border border-brand-primary/20'
+      className='flex items-center bg-black hover:bg-brand-primary text-brand-primary hover:text-black px-4 py-2 rounded-xl transition-colors text-sm font-medium border border-brand-primary/20'
     >
-      <Download className='w-4 h-4 mr-2' /> Export Report
+      <Download className='w-4 h-4 mr-2' /> Export
     </button>
   );
 };

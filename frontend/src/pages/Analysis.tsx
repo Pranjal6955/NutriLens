@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowLeft } from 'lucide-react';
 import { ImagePreview } from '../components/ImagePreview';
 import { AnalysisResults } from '../components/AnalysisResults';
 import { analyzeImage, getImageUrl } from '../api';
@@ -80,16 +79,6 @@ export const Analysis: React.FC = () => {
       exit={{ opacity: 0, y: -20 }}
       className='space-y-8'
     >
-      <div className='flex items-center justify-between'>
-        <button
-          onClick={reset}
-          className='flex items-center px-4 py-2 rounded-xl text-sm font-medium bg-white/10 hover:bg-white/20 hover:text-brand-primary border border-white/10 backdrop-blur-md transition-all duration-300 group shadow-sm hover:shadow-md'
-        >
-          <ArrowLeft className='w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform duration-300' />
-          Back to Upload
-        </button>
-      </div>
-
       <AnimatePresence mode='wait'>
         {preview && (
           <ImagePreview
@@ -98,6 +87,7 @@ export const Analysis: React.FC = () => {
             result={result}
             onUpload={handleUpload}
             onReset={reset}
+            onBack={reset}
           />
         )}
       </AnimatePresence>
