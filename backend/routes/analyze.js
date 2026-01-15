@@ -74,7 +74,7 @@ router.post('/analyze', upload.single('image'), async (req, res) => {
 
     const imageUrl = await uploadToCloudinary();
 
-    const prompt = `Analyze this food image thoroughly. Identify the food item(s), estimate the quantity (e.g., number of pieces, number of bowls), and provide a complete nutritional breakdown.
+    const prompt = `Analyze this food image thoroughly. Identify the food item(s), estimate the quantity (e.g., number of pieces, number of bowls), and provide a complete and DETAILED nutritional breakdown.
 
     Return ONLY valid JSON in the following format (all numeric values MUST be numbers, not strings):
     {
@@ -95,7 +95,12 @@ router.post('/analyze', upload.single('image'), async (req, res) => {
         "vitaminA": 0,
         "vitaminC": 0,
         "calcium": 0,
-        "iron": 0
+        "iron": 0,
+        "potassium": 0,
+        "magnesium": 0,
+        "zinc": 0,
+        "vitaminD": 0,
+        "vitaminB12": 0
       },
       "nutritionBreakdown": {
         "proteinPercent": 0,
@@ -113,10 +118,11 @@ router.post('/analyze', upload.single('image'), async (req, res) => {
 
     Notes:
     - All gram values should be in grams (g)
-    - Vitamins and minerals in milligrams (mg) or appropriate units
+    - Vitamins and minerals in milligrams (mg) or appropriate units (mcg for certain vitamins if standard, but preferably normalize to mg or specify unit if implicit constraints allow - however schema implies Number so stick to standard numerical values, e.g. mg for Sodium/Potassium/Calcium/Iron/Magnesium/Zinc. Vitamin A/D/B12/C usually mg or mcg. Provide best estimate in standard units.)
     - Percentages should be whole numbers (0-100)
     - healthScore should be 0-100
-    - Be accurate with portion size estimation (e.g., "2 slices", "1 bowl", "3 pieces")`;
+    - Be accurate with portion size estimation (e.g., "2 slices", "1 bowl", "3 pieces")
+    - Provide NON-ZERO estimates for micronutrients if reasonable trace amounts exist. Do not just zero them out unless completely absent.`;
 
     const part = {
       inlineData: {
@@ -193,7 +199,6 @@ router.get('/history', async (req, res) => {
       },
     });
   } catch (error) {
-
     console.error('Error fetching history:', error);
     res.status(500).json({ error: 'Failed to fetch history' });
   }
@@ -210,4 +215,3 @@ router.delete('/history', async (req, res) => {
 });
 
 module.exports = router;
-

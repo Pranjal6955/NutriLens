@@ -35,6 +35,11 @@ const MealSchema = new mongoose.Schema({
     vitaminC: Number,
     calcium: Number,
     iron: Number,
+    potassium: Number,
+    magnesium: Number,
+    zinc: Number,
+    vitaminD: Number,
+    vitaminB12: Number,
   },
   nutritionBreakdown: {
     proteinPercent: Number,

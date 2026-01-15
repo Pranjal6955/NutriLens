@@ -1,7 +1,34 @@
-import React from 'react';
-import { RefreshCcw, Sparkles, Loader2, Soup } from 'lucide-react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import {
+  RefreshCcw,
+  Sparkles,
+  Soup,
+  Apple,
+  Carrot,
+  Fish,
+  Beef,
+  Milk,
+  Croissant,
+  Wheat,
+  ArrowLeft,
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import type { MealData } from '../api';
+
+const LOADING_ICONS = [Apple, Carrot, Fish, Beef, Milk, Croissant, Wheat];
+
+const NUTRITION_FACTS = [
+  'Spinach is high in iron and vitamins A and C.',
+  'Avocados contain more potassium than bananas.',
+  'Almonds are a great source of healthy fats and protein.',
+  'Sweet potatoes are rich in beta-carotene.',
+  'Drinking water before meals can help with digestion.',
+  'Fiber helps maintain bowel health.',
+  'Dark chocolate is rich in antioxidants.',
+  'Eggs are a complete protein source.',
+  'Vitamin D helps your body absorb calcium.',
+  'Eating slowly can help you feel fuller.',
+];
 
 interface ImagePreviewProps {
   preview: string;
@@ -9,6 +36,7 @@ interface ImagePreviewProps {
   result: MealData | null;
   onUpload: () => void;
   onReset: () => void;
+  onBack: () => void;
 }
 
 export const ImagePreview: React.FC<ImagePreviewProps> = ({
@@ -17,7 +45,20 @@ export const ImagePreview: React.FC<ImagePreviewProps> = ({
   result,
   onUpload,
   onReset,
+  onBack,
 }) => {
+  const [currentFactIndex, setCurrentFactIndex] = useState(0);
+
+  useEffect(() => {
+    let interval: ReturnType<typeof setInterval>;
+    if (loading) {
+      interval = setInterval(() => {
+        setCurrentFactIndex((prev) => (prev + 1) % NUTRITION_FACTS.length);
+      }, 2500);
+    }
+    return () => clearInterval(interval);
+  }, [loading]);
+
   return (
     <motion.div
       key='preview'
@@ -25,14 +66,24 @@ export const ImagePreview: React.FC<ImagePreviewProps> = ({
       animate={{ opacity: 1, scale: 1 }}
       className='space-y-6'
     >
-      <div className='text-center'>
-        <h2 className='text-4xl font-bold mb-2 flex items-center justify-center gap-3'>
-          <Soup className='w-8 h-8 text-brand-primary' />
-          {result ? 'Bon Appétit!' : 'Ready to Analyze?'}
-        </h2>
-        <p className='text-lg text-gray-500 dark:text-gray-400'>
-          {result ? 'Here is your nutritional breakdown' : 'Ensure your food is clearly visible'}
-        </p>
+      <div className='flex items-center justify-between mb-2'>
+        <button
+          onClick={onBack}
+          className='flex items-center px-4 py-2 rounded-xl text-sm font-medium bg-white/10 hover:bg-black hover:text-brand-primary border border-white/10 backdrop-blur-md transition-all duration-300 group shadow-sm hover:shadow-md'
+        >
+          <ArrowLeft className='w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform duration-300' />
+          Back
+        </button>
+
+        <div className='text-center flex-1 pr-6'>
+          <h2 className='text-4xl font-bold flex items-center justify-center gap-3'>
+            <Soup className='w-8 h-8 text-brand-primary' />
+            {result ? 'Bon Appétit!' : 'Ready to Analyze?'}
+          </h2>
+          <p className='text-lg text-gray-500 dark:text-gray-400 mt-2'>
+            {result ? 'Here is your nutritional breakdown' : 'Ensure your food is clearly visible'}
+          </p>
+        </div>
       </div>
 
       <div className='relative aspect-video rounded-3xl overflow-hidden glass p-2'>
@@ -74,9 +125,40 @@ export const ImagePreview: React.FC<ImagePreviewProps> = ({
       )}
 
       {loading && (
-        <div className='w-full bg-black border border-white/10 py-6 rounded-2xl font-bold text-lg flex items-center justify-center space-x-3 text-white shadow-xl shadow-brand-primary/10'>
-          <Loader2 className='w-6 h-6 animate-spin text-brand-primary' />
-          <span className='animate-pulse tracking-wide'>AI is scanning your plate...</span>
+        <div className='w-full bg-black/40 border border-white/10 py-8 rounded-2xl font-bold text-lg flex flex-col items-center justify-center space-y-6 text-white shadow-xl backdrop-blur-md overflow-hidden'>
+          <div className='flex items-center gap-4'>
+            {LOADING_ICONS.map((Icon, index) => (
+              <motion.div
+                key={index}
+                animate={{
+                  y: [0, -8, 0],
+                  opacity: [0.5, 1, 0.5],
+                  scale: [1, 1.1, 1],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  delay: index * 0.2,
+                  ease: 'easeInOut',
+                }}
+              >
+                <Icon className='w-6 h-6 text-brand-primary' />
+              </motion.div>
+            ))}
+          </div>
+          <div className='h-6 relative w-full flex justify-center'>
+            <AnimatePresence mode='wait'>
+              <motion.p
+                key={currentFactIndex}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className='text-sm text-gray-300 font-medium px-4 text-center absolute w-full'
+              >
+                Did you know? {NUTRITION_FACTS[currentFactIndex]}
+              </motion.p>
+            </AnimatePresence>
+          </div>
         </div>
       )}
     </motion.div>
