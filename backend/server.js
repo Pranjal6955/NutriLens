@@ -18,7 +18,11 @@ const corsOptions = {
   origin: (origin, callback) => {
     // Allow requests with no origin (e.g., mobile apps, curl)
     if (!origin) return callback(null, true);
-    if (allowedOrigins.length === 0 || allowedOrigins.indexOf(origin) !== -1) {
+    if (
+      allowedOrigins.length === 0 ||
+      allowedOrigins.indexOf(origin) !== -1 ||
+      origin.endsWith('.vercel.app')
+    ) {
       callback(null, true);
     } else {
       console.error(
