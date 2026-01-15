@@ -66,11 +66,17 @@ export const analyzeImage = async (file: File): Promise<MealData> => {
 };
 
 export const getHistory = async (limit = 20, skip = 0): Promise<HistoryResponse> => {
+
   const response = await axios.get(`${API_URL}/history`, {
     params: { limit, skip },
   });
   return response.data;
 };
+
+export const clearHistory = async (): Promise<void> => {
+  await axios.delete(`${API_URL}/history`);
+};
+
 
 export const getImageUrl = (imagePath: string) => {
   if (imagePath.startsWith('http')) {
