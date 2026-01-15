@@ -21,6 +21,9 @@ const corsOptions = {
     if (allowedOrigins.length === 0 || allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
+      console.error(
+        `CORS Blocked Origin: ${origin}. Allowed Origins: ${JSON.stringify(allowedOrigins)}`
+      );
       callback(new Error('Not allowed by CORS'));
     }
   },
