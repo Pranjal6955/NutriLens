@@ -11,6 +11,7 @@ import {
   Croissant,
   Wheat,
   ArrowLeft,
+  Scale,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { MealData } from '../api';
@@ -37,6 +38,8 @@ interface ImagePreviewProps {
   onUpload: () => void;
   onReset: () => void;
   onBack: () => void;
+  quantity?: string;
+  setQuantity?: (q: string) => void;
 }
 
 export const ImagePreview: React.FC<ImagePreviewProps> = ({
@@ -46,6 +49,8 @@ export const ImagePreview: React.FC<ImagePreviewProps> = ({
   onUpload,
   onReset,
   onBack,
+  quantity,
+  setQuantity,
 }) => {
   const [currentFactIndex, setCurrentFactIndex] = useState(0);
 
@@ -104,6 +109,45 @@ export const ImagePreview: React.FC<ImagePreviewProps> = ({
           <RefreshCcw className='w-5 h-5' />
         </button>
       </div>
+
+      {!result && !loading && setQuantity && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className='space-y-3'
+        >
+          <div className='flex items-center gap-2 text-gray-400 text-sm font-medium'>
+            <Scale className='w-4 h-4' />
+            <span>Quantity / Serving Size (Optional)</span>
+          </div>
+          <div className='space-y-3'>
+            <input
+              type='text'
+              value={quantity}
+              onChange={(e) => setQuantity?.(e.target.value)}
+              placeholder='e.g., 2 bowls, 150g, 1 plate...'
+              className='w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-brand-primary/50 focus:ring-1 focus:ring-brand-primary/50 transition-all'
+            />
+            <div className='flex flex-wrap gap-2'>
+              {['1 Bowl', '1 Plate', '1 Cup', '1 Piece', 'Small Portion', 'Large Portion'].map(
+                (opt) => (
+                  <button
+                    key={opt}
+                    onClick={() => setQuantity?.(opt)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
+                      quantity === opt
+                        ? 'bg-brand-primary text-black border-brand-primary'
+                        : 'bg-white/5 text-gray-400 border-white/10 hover:bg-white/10 hover:text-white'
+                    }`}
+                  >
+                    {opt}
+                  </button>
+                ),
+              )}
+            </div>
+          </div>
+        </motion.div>
+      )}
 
       {!result && !loading && (
         <div className='flex flex-col md:flex-row gap-4'>

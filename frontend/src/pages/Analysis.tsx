@@ -38,11 +38,13 @@ export const Analysis: React.FC = () => {
     }
   }, [location.state, navigate]);
 
+  const [quantity, setQuantity] = useState('');
+
   const handleUpload = async () => {
     if (!file) return;
     setLoading(true);
     try {
-      const data = await analyzeImage(file);
+      const data = await analyzeImage(file, quantity);
       setResult(data);
       // We might want to refresh history in App if we could,
       // but for now let's just show the result.
@@ -69,6 +71,7 @@ export const Analysis: React.FC = () => {
     setFile(null);
     setPreview(null);
     setResult(null);
+    setQuantity('');
     navigate('/');
   };
 
@@ -88,6 +91,8 @@ export const Analysis: React.FC = () => {
             onUpload={handleUpload}
             onReset={reset}
             onBack={reset}
+            quantity={quantity}
+            setQuantity={setQuantity}
           />
         )}
       </AnimatePresence>

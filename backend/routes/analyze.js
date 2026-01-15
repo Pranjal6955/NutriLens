@@ -18,7 +18,7 @@ const storage = multer.memoryStorage();
 const upload = multer({
   storage: storage,
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5 MB max file size
+    fileSize: 50 * 1024 * 1024, // 50 MB max file size
     files: 1, // only one file expected for this route
   },
   fileFilter: (req, file, cb) => {
@@ -72,14 +72,19 @@ router.post('/analyze', upload.single('image'), async (req, res) => {
       });
     };
 
-    const imageUrl = await uploadToCloudinary();
+    const quantity = req.body.quantity || 'Not specified';
 
-    const prompt = `Analyze this food image thoroughly. Identify the food item(s), estimate the quantity (e.g., number of pieces, number of bowls), and provide a complete and DETAILED nutritional breakdown.
+    const prompt = `Analyze this food image thoroughly. Identify the food item(s).
+    
+    User Context/Quantity provided: "${quantity}".
+    If the user provided a quantity, USE IT as the ground truth for your nutritional calculations.
+
+    Estimate the quantity (e.g., number of pieces, number of bowls) if not provided, and provide a complete and DETAILED nutritional breakdown.
 
     Return ONLY valid JSON in the following format (all numeric values MUST be numbers, not strings):
     {
       "foodName": "...",
-      "servingSize": "...",
+        "servingSize": "...",
       "isHealthy": true/false,
       "calories": 0,
       "macronutrients": {
@@ -121,7 +126,7 @@ router.post('/analyze', upload.single('image'), async (req, res) => {
     - Vitamins and minerals in milligrams (mg) or appropriate units (mcg for certain vitamins if standard, but preferably normalize to mg or specify unit if implicit constraints allow - however schema implies Number so stick to standard numerical values, e.g. mg for Sodium/Potassium/Calcium/Iron/Magnesium/Zinc. Vitamin A/D/B12/C usually mg or mcg. Provide best estimate in standard units.)
     - Percentages should be whole numbers (0-100)
     - healthScore should be 0-100
-    - Be accurate with portion size estimation (e.g., "2 slices", "1 bowl", "3 pieces")
+    - Be accurate with portion size estimation based on the User Context provided.
     - Provide NON-ZERO estimates for micronutrients if reasonable trace amounts exist. Do not just zero them out unless completely absent.`;
 
     const part = {
@@ -131,7 +136,11 @@ router.post('/analyze', upload.single('image'), async (req, res) => {
       },
     };
 
-    const result = await model.generateContent([prompt, part]);
+    const [imageUrl, result] = await Promise.all([
+      uploadToCloudinary(),
+      model.generateContent([prompt, part]),
+    ]);
+
     const response = await result.response;
     let text = response.text();
 

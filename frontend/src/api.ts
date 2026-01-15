@@ -57,9 +57,15 @@ export interface HistoryResponse {
   };
 }
 
-export const analyzeImage = async (file: File): Promise<MealData> => {
+import { compressImage } from './utils/imageOptimizer';
+
+export const analyzeImage = async (file: File, quantity?: string): Promise<MealData> => {
+  const compressedFile = await compressImage(file);
   const formData = new FormData();
-  formData.append('image', file);
+  if (quantity) {
+    formData.append('quantity', quantity);
+  }
+  formData.append('image', compressedFile);
 
   const response = await axios.post(`${API_URL}/analyze`, formData, {
     headers: {
