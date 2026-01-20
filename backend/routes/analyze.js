@@ -4,6 +4,7 @@ const multer = require('multer');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const cloudinary = require('cloudinary').v2;
 const Meal = require('../models/Meal');
+const logger = require('../utils/logger');
 
 // Validate required environment variables
 if (!process.env.GEMINI_API_KEY) {
@@ -11,11 +12,16 @@ if (!process.env.GEMINI_API_KEY) {
 }
 
 // Configure Cloudinary
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+try {
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+  });
+} catch (error) {
+  logger.error('Cloudinary configuration failed:', error);
+  throw error;
+}
 
 // Configure Multer with enhanced security
 const storage = multer.memoryStorage();
@@ -47,8 +53,13 @@ const model = genAI.getGenerativeModel({ model: 'gemini-flash-latest' });
 
 // Analyze Route
 router.post('/analyze', upload.single('image'), async (req, res) => {
+  const requestId = Date.now().toString();
+  
   try {
+    logger.info(`Analysis request started: ${requestId}`);
+    
     if (!req.file) {
+      logger.warn(`No image uploaded: ${requestId}`);
       return res.status(400).json({ error: 'No image uploaded' });
     }
 
@@ -63,11 +74,15 @@ router.post('/analyze', upload.single('image'), async (req, res) => {
           { folder: 'nutrilens' },
           (error, result) => {
             if (error) {
+              logger.error(`Cloudinary upload failed: ${requestId}`, error);
               reject(error);
             } else if (result) {
+              logger.info(`Cloudinary upload success: ${requestId}`);
               resolve(result.secure_url);
             } else {
-              reject(new Error('Upload failed'));
+              const uploadError = new Error('Upload failed');
+              logger.error(`Cloudinary upload failed: ${requestId}`, uploadError);
+              reject(uploadError);
             }
           }
         );
@@ -145,7 +160,9 @@ router.post('/analyze', upload.single('image'), async (req, res) => {
     let analysisData;
     try {
       analysisData = JSON.parse(text);
+      logger.info(`AI analysis successful: ${requestId}`);
     } catch (e) {
+      logger.error(`JSON parsing failed: ${requestId}`, e);
       analysisData = {
         foodName: 'Unknown',
         servingSize: 'Unknown',
@@ -171,22 +188,28 @@ router.post('/analyze', upload.single('image'), async (req, res) => {
     });
 
     await newMeal.save();
+    logger.info(`Meal saved to database: ${requestId}`);
 
     res.json({
       message: 'Analysis successful',
       data: newMeal,
     });
   } catch (error) {
-    console.error('Analysis error:', error.message);
-    res.status(500).json({ error: 'Analysis failed' });
+    logger.error(`Analysis failed: ${requestId}`, error);
+    res.status(500).json({ 
+      error: 'Analysis failed',
+      requestId 
+    });
   }
 });
 
 router.get('/history', async (req, res) => {
   try {
     const { limit, skip } = req.query;
-    const parsedLimit = Math.min(parseInt(limit, 10) || 20, 50); // Cap at 50
+    const parsedLimit = Math.min(parseInt(limit, 10) || 20, 50);
     const parsedSkip = Math.max(parseInt(skip, 10) || 0, 0);
+
+    logger.info(`History request: limit=${parsedLimit}, skip=${parsedSkip}`);
 
     const meals = await Meal.find()
       .sort({ createdAt: -1 })
@@ -200,17 +223,18 @@ router.get('/history', async (req, res) => {
       pagination: { total, limit: parsedLimit, skip: parsedSkip },
     });
   } catch (error) {
-    console.error('History fetch error:', error.message);
+    logger.error('History fetch error:', error);
     res.status(500).json({ error: 'Failed to fetch history' });
   }
 });
 
 router.delete('/history', async (req, res) => {
   try {
-    await Meal.deleteMany({});
+    const result = await Meal.deleteMany({});
+    logger.info(`History cleared: ${result.deletedCount} records deleted`);
     res.json({ message: 'History cleared' });
   } catch (error) {
-    console.error('History clear error:', error.message);
+    logger.error('History clear error:', error);
     res.status(500).json({ error: 'Failed to clear history' });
   }
 });
