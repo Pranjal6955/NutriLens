@@ -205,18 +205,28 @@ router.post('/analyze', upload.single('image'), async (req, res) => {
 
 router.get('/history', async (req, res) => {
   try {
-    const { limit, skip } = req.query;
+    const { limit, skip, search, healthy } = req.query;
     const parsedLimit = Math.min(parseInt(limit, 10) || 20, 50);
     const parsedSkip = Math.max(parseInt(skip, 10) || 0, 0);
 
     logger.info(`History request: limit=${parsedLimit}, skip=${parsedSkip}`);
 
-    const meals = await Meal.find()
+    // Build query with indexes
+    let query = {};
+    if (search) {
+      query.$text = { $search: search };
+    }
+    if (healthy !== undefined) {
+      query.isHealthy = healthy === 'true';
+    }
+
+    const meals = await Meal.find(query)
       .sort({ createdAt: -1 })
       .skip(parsedSkip)
-      .limit(parsedLimit);
+      .limit(parsedLimit)
+      .lean(); // Use lean() for better performance
 
-    const total = await Meal.countDocuments();
+    const total = await Meal.countDocuments(query);
 
     res.json({
       data: meals,

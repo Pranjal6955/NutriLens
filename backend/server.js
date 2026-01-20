@@ -6,6 +6,7 @@ const rateLimit = require('express-rate-limit');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const mongoose = require('mongoose');
 const logger = require('./utils/logger');
 
 // Handle unhandled promise rejections
@@ -88,6 +89,11 @@ const createDir = (dir) => {
 createDir(path.join(__dirname, 'uploads'));
 createDir(path.join(__dirname, 'logs'));
 
+// File cleanup for memory management
+const FileCleanup = require('./utils/fileCleanup');
+const fileCleanup = new FileCleanup(path.join(__dirname, 'uploads'));
+fileCleanup.startCleanupSchedule();
+
 // Routes
 const analyzeRoutes = require('./routes/analyze');
 app.use('/api', uploadLimiter, analyzeRoutes);
@@ -148,6 +154,20 @@ const connectDB = require('./config/db');
 const startServer = async () => {
   try {
     await connectDB();
+    
+    // Graceful shutdown handling
+    process.on('SIGTERM', async () => {
+      logger.info('SIGTERM received, shutting down gracefully');
+      await mongoose.connection.close();
+      process.exit(0);
+    });
+    
+    process.on('SIGINT', async () => {
+      logger.info('SIGINT received, shutting down gracefully');
+      await mongoose.connection.close();
+      process.exit(0);
+    });
+    
     app.listen(PORT, () => {
       logger.info(`Server running on port ${PORT}`);
     });
