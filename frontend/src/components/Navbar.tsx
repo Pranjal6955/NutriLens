@@ -1,4 +1,6 @@
+/* eslint-disable prettier/prettier */
 import { History } from 'lucide-react';
+import { FaGithub } from 'react-icons/fa6';
 import { ThemeToggle } from './ThemeToggle';
 
 interface NavbarProps {
@@ -21,7 +23,24 @@ export const Navbar = ({ showHistory, setShowHistory }: NavbarProps) => {
           </span>
         </div>
         <div className='flex items-center space-x-4'>
+          {/* Star our Repo CTA */}
+          <a
+            href='https://github.com/Pranjal6955/NutriLens/'
+            target='_blank'
+            rel='noopener noreferrer'
+            className='hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-full
+               border border-[var(--glass-border)]
+               text-sm font-medium
+               text-gray-700 dark:text-gray-300
+               hover:bg-black/5 dark:hover:bg-white/10
+               hover:text-brand-primary
+               transition-colors'
+          >
+            <FaGithub className='text-base' />⭐ Star our Repo
+          </a>
+
           <ThemeToggle />
+
           <button
             onClick={() => setShowHistory(!showHistory)}
             className='p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-colors'

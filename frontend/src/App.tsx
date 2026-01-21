@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
@@ -7,7 +8,7 @@ import { Home } from './pages/Home';
 import { Analysis } from './pages/Analysis';
 import { getHistory, clearHistory } from './api';
 import type { MealData } from './api';
-
+import Footer from './components/Footer';
 const App: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -47,11 +48,12 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className='min-h-screen pb-20 transition-colors duration-300'>
+    <div className='min-h-screen flex flex-col transition-colors duration-300'>
       {/* Navbar */}
       <Navbar showHistory={showHistory} setShowHistory={setShowHistory} />
 
-      <main className='max-w-4xl mx-auto px-4 pt-32'>
+      {/* Main Content */}
+      <main className='flex-1 max-w-4xl mx-auto px-4 pt-32'>
         <AnimatePresence mode='wait'>
           <Routes location={location} key={location.pathname}>
             <Route path='/' element={<Home />} />
@@ -59,7 +61,6 @@ const App: React.FC = () => {
           </Routes>
         </AnimatePresence>
 
-        {/* History Sidebar/Section */}
         <HistorySidebar
           isOpen={showHistory}
           onClose={() => setShowHistory(false)}
@@ -71,6 +72,9 @@ const App: React.FC = () => {
           onClearHistory={handleClearHistory}
         />
       </main>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };
