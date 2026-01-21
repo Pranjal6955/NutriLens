@@ -108,3 +108,138 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--scrollbar-thumb-hover);
 }
+.site-footer {
+  background: var(--footer-bg);
+  border-top: 1px solid var(--footer-border);
+  margin-top: 80px;
+  font-family: inherit;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.footer-brand p {
+  color: var(--footer-text);
+  font-size: 14px;
+  max-width: 280px;
+}
+
+.footer-links h4,
+.footer-social h4 {
+  font-size: 16px;
+  margin-bottom: 12px;
+  color: var(--footer-heading);
+}
+
+.footer-links a {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: var(--footer-text);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footer-links a:hover {
+  color: var(--footer-hover);
+}
+
+.social-icons a {
+  font-size: 20px;
+  color: var(--footer-text);
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.social-icons a:hover {
+  color: var(--footer-hover);
+  transform: translateY(-2px);
+}
+
+.footer-bottom {
+  text-align: center;
+  padding: 16px;
+  font-size: 13px;
+  color: var(--footer-muted);
+  border-top: 1px solid var(--footer-border);
+}
+.footer-brand img {
+  width: 80px; /* or 96px if you prefer */
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 8px;
+  object-fit: contain;
+
+  /* Keep original logo color */
+  filter: none;
+  opacity: 1;
+
+  transition: none; /* no color/hover effects */
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 48px 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 32px;
+
+  align-items: start; /* ⬅ change this */
+}
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.footer-brand img {
+  width: 80px; /* smaller, cleaner */
+  margin-bottom: 8px;
+}
+.footer-social {
+  display: flex;
+  flex-direction: column;
+}
+
+.social-icons {
+  margin-top: 8px;
+  display: flex;
+  gap: 14px;
+}
+@media (max-width: 640px) {
+  .footer-container {
+    text-align: center;
+  }
+
+  .footer-brand,
+  .footer-social {
+    align-items: center;
+  }
+
+  .social-icons {
+    justify-content: center;
+  }
+}
+/* Default state already handled */
+.social-icons a {
+  color: var(--footer-text);
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* GitHub */
+.social-icons a.icon-github:hover {
+  color: #3c9637;
+}
+
+/* LinkedIn */
+.social-icons a.icon-linkedin:hover {
+  color: #0a66c2;
+}
+
+/* Twitter (X) */
+.social-icons a.icon-twitter:hover {
+  color: #181717;
+}
