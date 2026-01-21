@@ -1,10 +1,17 @@
 const mongoose = require('mongoose');
 
 const connectDB = async () => {
-  const mongoURI =
-    process.env.MONGO_URI || 'mongodb://localhost:27017/nutrilens';
-  await mongoose.connect(mongoURI);
-  console.log('MongoDB connected successfully');
+  try {
+    if (!process.env.MONGO_URI) {
+      throw new Error('MONGO_URI environment variable is required');
+    }
+
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log('MongoDB connected successfully');
+  } catch (error) {
+    console.error('Database connection failed:', error.message);
+    throw error;
+  }
 };
 
 module.exports = connectDB;
