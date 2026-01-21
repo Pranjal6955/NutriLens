@@ -34,11 +34,13 @@ const upload = multer({
   fileFilter: (req, file, cb) => {
     const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
     const allowedExtensions = ['.jpg', '.jpeg', '.png', '.webp'];
-    
+
     const fileExtension = file.originalname.toLowerCase().split('.').pop();
-    
-    if (!allowedMimeTypes.includes(file.mimetype) || 
-        !allowedExtensions.includes(`.${fileExtension}`)) {
+
+    if (
+      !allowedMimeTypes.includes(file.mimetype) ||
+      !allowedExtensions.includes(`.${fileExtension}`)
+    ) {
       return cb(new Error('Invalid file type'));
     }
     cb(null, true);
@@ -48,10 +50,10 @@ const upload = multer({
 // Analyze Route
 router.post('/analyze', upload.single('image'), async (req, res) => {
   const requestId = Date.now().toString();
-  
+
   try {
     logger.info(`Analysis request started: ${requestId}`);
-    
+
     if (!req.file) {
       logger.warn(`No image uploaded: ${requestId}`);
       return res.status(400).json({ error: 'No image uploaded' });
@@ -80,7 +82,10 @@ router.post('/analyze', upload.single('image'), async (req, res) => {
               resolve(result.secure_url);
             } else {
               const uploadError = new Error('Upload failed');
-              logger.error(`Cloudinary upload failed: ${requestId}`, uploadError);
+              logger.error(
+                `Cloudinary upload failed: ${requestId}`,
+                uploadError
+              );
               reject(uploadError);
             }
           }
@@ -136,7 +141,15 @@ router.post('/analyze', upload.single('image'), async (req, res) => {
       },
       "analysis": "Detailed analysis of the food's nutritional value, preparation method, and health implications (2-3 sentences)",
       "recommendation": "What to eat next to balance this meal nutritionally (be specific with food suggestions)"
-    }`;
+    }
+       }
+    Notes:
+    - All gram values should be in grams (g)
+    - Vitamins and minerals in milligrams (mg) or appropriate units (mcg for certain vitamins if standard, but preferably normalize to mg or specify unit if implicit constraints allow - however schema implies Number so stick to standard numerical values, e.g. mg for Sodium/Potassium/Calcium/Iron/Magnesium/Zinc. Vitamin A/D/B12/C usually mg or mcg. Provide best estimate in standard units.)
+    - Percentages should be whole numbers (0-100)
+    - healthScore should be 0-100
+    - Be accurate with portion size estimation based on the User Context provided.
+    - Provide NON-ZERO estimates for micronutrients if reasonable trace amounts exist. Do not just zero them out unless completely absent.`;
 
     const part = {
       inlineData: {
@@ -154,7 +167,10 @@ router.post('/analyze', upload.single('image'), async (req, res) => {
     let text = response.text();
 
     // Clean up JSON string
-    text = text.replace(/```json/g, '').replace(/```/g, '').trim();
+    text = text
+      .replace(/```json/g, '')
+      .replace(/```/g, '')
+      .trim();
 
     let analysisData;
     try {
@@ -169,11 +185,23 @@ router.post('/analyze', upload.single('image'), async (req, res) => {
         calories: 0,
         macronutrients: { protein: 0, carbs: 0, fat: 0, fiber: 0, sugar: 0 },
         micronutrients: {
-          sodium: 0, cholesterol: 0, vitaminA: 0, vitaminC: 0,
-          calcium: 0, iron: 0, potassium: 0, magnesium: 0,
-          zinc: 0, vitaminD: 0, vitaminB12: 0
+          sodium: 0,
+          cholesterol: 0,
+          vitaminA: 0,
+          vitaminC: 0,
+          calcium: 0,
+          iron: 0,
+          potassium: 0,
+          magnesium: 0,
+          zinc: 0,
+          vitaminD: 0,
+          vitaminB12: 0,
         },
-        nutritionBreakdown: { proteinPercent: 0, carbsPercent: 0, fatPercent: 0 },
+        nutritionBreakdown: {
+          proteinPercent: 0,
+          carbsPercent: 0,
+          fatPercent: 0,
+        },
         healthMetrics: { healthScore: 0, benefits: [], concerns: [] },
         analysis: 'Could not parse AI response.',
         recommendation: 'Try taking a clearer photo.',
@@ -196,16 +224,16 @@ router.post('/analyze', upload.single('image'), async (req, res) => {
   } catch (error) {
     if (error.message === 'All API keys have exceeded rate limits') {
       logger.error(`API rate limit exceeded: ${requestId}`, error);
-      return res.status(429).json({ 
+      return res.status(429).json({
         error: 'Service temporarily unavailable. Please try again later.',
-        requestId 
+        requestId,
       });
     }
-    
+
     logger.error(`Analysis failed: ${requestId}`, error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Analysis failed',
-      requestId 
+      requestId,
     });
   }
 });
@@ -216,7 +244,7 @@ router.get('/api-stats', (req, res) => {
     const stats = apiKeyManager.getUsageStats();
     res.json({
       message: 'API usage statistics',
-      data: stats
+      data: stats,
     });
   } catch (error) {
     logger.error('Failed to get API stats:', error);
