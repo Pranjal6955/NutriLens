@@ -9,10 +9,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "lint": "eslint . --ext .ts,.js --max-warnings 0",
-    "lint:fix": "eslint . --ext .ts,.js --fix",
-    "format": "prettier --write \"**/*.{ts,js,json}\" \"!node_modules\" \"!dist\"",
-    "format:check": "prettier --check \"**/*.{ts,js,json}\" \"!node_modules\" \"!dist\"",
+    "format": "prettier --write \"**/*.{js,json}\" \"!node_modules\" \"!dist\"",
+    "format:check": "prettier --check \"**/*.{js,json}\" \"!node_modules\" \"!dist\"",
     "build": "echo 'Backend uses JavaScript - no build step needed'",
     "start:prod": "node server.js"
   },
@@ -26,10 +24,6 @@
     "multer": "^2.0.2"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^7.18.0",
-    "@typescript-eslint/parser": "^7.18.0",
-    "eslint": "^8.57.1",
-    "prettier": "^3.7.4",
-    "typescript": "^5.5.4"
+    "prettier": "^3.7.4"
   }
 }

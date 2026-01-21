@@ -74,6 +74,7 @@ router.post('/analyze', upload.single('image'), async (req, res) => {
 
     const quantity = req.body.quantity || 'Not specified';
 
+    // Please Don't change the this part
     const prompt = `Analyze this food image thoroughly. Identify the food item(s).
     
     User Context/Quantity provided: "${quantity}".
