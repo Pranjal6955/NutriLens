@@ -6,6 +6,8 @@ const cloudinary = require('cloudinary').v2;
 const Meal = require('../models/Meal');
 const logger = require('../utils/logger');
 const APIKeyManager = require('../utils/apiKeyManager');
+const resourceManager = require('../utils/resourceManager');
+const fs = require('fs');
 
 // Initialize API Key Manager
 const apiKeyManager = new APIKeyManager();
@@ -22,8 +24,16 @@ try {
   throw error;
 }
 
-// Configure Multer
-const storage = multer.memoryStorage();
+// Configure Multer with disk storage to prevent memory leaks
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1E9)}.${file.originalname.split('.').pop()}`;
+    cb(null, uniqueName);
+  }
+});
 
 const upload = multer({
   storage: storage,
@@ -47,7 +57,8 @@ const upload = multer({
 
 // Analyze Route
 router.post('/analyze', upload.single('image'), async (req, res) => {
-  const requestId = Date.now().toString();
+  const requestId = resourceManager.trackRequest(req, res, 60000); // 60 second timeout
+  let tempFilePath = null;
   
   try {
     logger.info(`Analysis request started: ${requestId}`);
@@ -57,34 +68,53 @@ router.post('/analyze', upload.single('image'), async (req, res) => {
       return res.status(400).json({ error: 'No image uploaded' });
     }
 
+    tempFilePath = req.file.path;
+    
     // Get valid API key with rotation and rate limiting
     const apiKey = await apiKeyManager.getValidKey();
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ model: 'gemini-flash-latest' });
 
     const mimeType = req.file.mimetype;
-    const imageBuffer = req.file.buffer;
+    const imageBuffer = fs.readFileSync(tempFilePath);
     const imageBase64 = imageBuffer.toString('base64');
 
-    // Upload to Cloudinary
+    // Upload to Cloudinary with proper stream management
     const uploadToCloudinary = () => {
       return new Promise((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
-          { folder: 'nutrilens' },
+          { 
+            folder: 'nutrilens',
+            resource_type: 'auto',
+            timeout: 30000
+          },
           (error, result) => {
             if (error) {
               logger.error(`Cloudinary upload failed: ${requestId}`, error);
+              resourceManager.cleanupStream(stream, requestId);
               reject(error);
             } else if (result) {
               logger.info(`Cloudinary upload success: ${requestId}`);
+              resourceManager.cleanupStream(stream, requestId);
               resolve(result.secure_url);
             } else {
               const uploadError = new Error('Upload failed');
               logger.error(`Cloudinary upload failed: ${requestId}`, uploadError);
+              resourceManager.cleanupStream(stream, requestId);
               reject(uploadError);
             }
           }
         );
+        
+        resourceManager.trackStream(stream, requestId);
+        
+        // Handle stream errors
+        stream.on('error', (error) => {
+          logger.error(`Stream error: ${requestId}`, error);
+          resourceManager.cleanupStream(stream, requestId);
+          reject(error);
+        });
+        
         stream.end(imageBuffer);
       });
     };
@@ -207,6 +237,16 @@ router.post('/analyze', upload.single('image'), async (req, res) => {
       error: 'Analysis failed',
       requestId 
     });
+  } finally {
+    // Always cleanup temp file
+    if (tempFilePath) {
+      try {
+        fs.unlinkSync(tempFilePath);
+        logger.debug(`Temp file cleaned: ${tempFilePath}`);
+      } catch (cleanupError) {
+        logger.error(`Failed to cleanup temp file: ${tempFilePath}`, cleanupError);
+      }
+    }
   }
 });
 
