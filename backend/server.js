@@ -2,6 +2,8 @@ require('dotenv').config();
 
 const express = require('express');
 const cors = require('cors');
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
 const app = express();
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
@@ -9,19 +11,20 @@ const multer = require('multer');
 const path = require('path');
 
 const fs = require('fs');
-const cookieParser = require("cookie-parser");
-app.use(cookieParser());
+
+
 const authRoutes =require("./routes/authRoutes");
-console.log("authRoutes =", authRoutes);
+
 
 // Validate required environment variables
-const requiredEnvVars = ['GEMINI_API_KEY', 'MONGO_URI'];
+const requiredEnvVars = ['GEMINI_API_KEY', 'MONGO_URI', 'JWT_SECRET'];
 for (const envVar of requiredEnvVars) {
   if (!process.env[envVar]) {
     console.error(`Missing required environment variable: ${envVar}`);
     process.exit(1);
   }
 }
+
 
 
 

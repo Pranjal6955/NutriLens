@@ -1,22 +1,25 @@
 
 const express = require("express");
-const {
-  register,
-  login,
-  logout
-} = require("../controller/authController");
-
-const authMiddleware = require("../middleware/authMiddleware");
+const rateLimit = require("express-rate-limit");
+const { register, login, logout } = require("../controller/authController");
 
 const router = express.Router();
 
-// existing routes
-router.post("/register", register);
-router.post("/login", login);
-router.post("/logout", logout);
 
-// 🔒 Protected dashboard route
-router.get("/dashboard", authMiddleware, (req, res) => {
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, 
+  max: 100, 
+  standardHeaders: true,
+  legacyHeaders: false,
+  message:
+    "Too many authentication attempts from this IP, please try again later."
+});
+
+
+router.post("/register", authLimiter, register);
+router.post("/login", authLimiter, login);
+router.post("/logout", authLimiter, logout);
+router.get("/dashboard",authLimiter, authMiddleware, (req, res) => {
   res.json({
     message: "Welcome to dashboard",
     user: req.user
