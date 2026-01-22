@@ -5,6 +5,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 
 const app = express();
+app.use(cookieParser());
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const multer = require('multer');
@@ -15,7 +16,7 @@ const fs = require('fs');
 const authRoutes = require('./routes/authRoutes');
 
 // Validate required environment variables
-const requiredEnvVars = ['GEMINI_API_KEY', 'MONGO_URI', 'JWT_SECRET'];
+const requiredEnvVars = ['MONGO_URI', 'JWT_SECRET'];
 for (const envVar of requiredEnvVars) {
   if (!process.env[envVar]) {
     console.error(`Missing required environment variable: ${envVar}`);
