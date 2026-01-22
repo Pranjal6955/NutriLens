@@ -36,46 +36,46 @@ exports.register = async (req, res) => {
         subject: 'Welcome to NutriLens – Let’s get started 🚀',
         text: `Hi ${userName},
 
-Welcome to NutriLens!
+            Welcome to NutriLens!
 
-Your account has been successfully created. You can now start using NutriLens.
+            Your account has been successfully created. You can now start using NutriLens.
 
-If you did not create this account, please contact our support team.
+            If you did not create this account, please contact our support team.
 
-Thanks,
-The NutriLens Team`,
+            Thanks,
+                The NutriLens Team`,
         html: `
-    <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-      <h2 style="color: #2c7be5;">Welcome to NutriLens 🎉</h2>
+        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+        <h2 style="color: #2c7be5;">Welcome to NutriLens 🎉</h2>
 
-      <p>Hi <strong>${userName}</strong>,</p>
+        <p>Hi <strong>${userName}</strong>,</p>
 
-      <p>
-        We’re excited to have you on board! Your NutriLens account has been
-        successfully created.
-      </p>
+        <p>
+            We’re excited to have you on board! Your NutriLens account has been
+            successfully created.
+        </p>
 
-      <p>
-        You can now explore the platform and start using NutriLens features.
-      </p>
+        <p>
+            You can now explore the platform and start using NutriLens features.
+        </p>
 
-      <p style="margin-top: 20px;">
-        If you didn’t create this account or need any help, feel free to reach
-        out to our support team.
-      </p>
+        <p style="margin-top: 20px;">
+            If you didn’t create this account or need any help, feel free to reach
+            out to our support team.
+        </p>
 
-      <p style="margin-top: 30px;">
-        Cheers,<br />
-        <strong>The NutriLens Team</strong>
-      </p>
+        <p style="margin-top: 30px;">
+            Cheers,<br />
+            <strong>The NutriLens Team</strong>
+        </p>
 
-      <hr style="margin-top: 40px;" />
+        <hr style="margin-top: 40px;" />
 
-      <p style="font-size: 12px; color: #777;">
-        This is an automated message. Please do not reply to this email.
-      </p>
-    </div>
-  `,
+        <p style="font-size: 12px; color: #777;">
+            This is an automated message. Please do not reply to this email.
+        </p>
+        </div>
+    `,
       });
     } catch (emailErr) {
       console.warn('Welcome email failed:', emailErr.message);

@@ -21,7 +21,7 @@ router.post('/register', authLimiter, register);
 router.post('/login', authLimiter, login);
 router.post('/logout', authLimiter, logout);
 
-// 🔒 Protected route
+// Protected route
 router.get('/dashboard', authMiddleware, (req, res) => {
   res.json({
     message: 'Welcome to dashboard',
