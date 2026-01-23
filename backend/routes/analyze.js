@@ -299,4 +299,23 @@ router.delete('/history', async (req, res) => {
   }
 });
 
+router.get('/meals', async (req, res) => {
+  try {
+    const { ids } = req.query;
+    if (!ids) {
+      return res.status(400).json({ error: 'Meal IDs are required' });
+    }
+
+    const mealIds = ids.split(',').map(id => id.trim());
+    const meals = await Meal.find({ _id: { $in: mealIds } }).lean();
+
+    res.json({
+      data: meals,
+    });
+  } catch (error) {
+    logger.error('Meals fetch error:', error);
+    res.status(500).json({ error: 'Failed to fetch meals' });
+  }
+});
+
 module.exports = router;
