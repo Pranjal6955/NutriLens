@@ -103,7 +103,10 @@ export const clearHistory = async (): Promise<void> => {
   await axios.delete(`${API_URL}/history`);
 };
 
-export const savePortionAdjustment = async (mealId: string, portion: any) => {
+export const savePortionAdjustment = async (
+  mealId: string,
+  portion: MealData['portionEstimate'],
+) => {
   const response = await axios.patch(`${API_URL}/history/${mealId}/portion`, { portion });
   return response.data.data;
 };

@@ -225,13 +225,33 @@ router.post('/analyze', upload.single('image'), async (req, res) => {
         if (gramsMatch) {
           const grams = parseInt(gramsMatch[1], 10);
           // Map grams to nearest category
-          if (grams < 180) return { category: 'small', grams, multiplier: grams / 250, confidence: 0.9 };
-          if (grams < 320) return { category: 'medium', grams, multiplier: grams / 250, confidence: 0.9 };
-          return { category: 'large', grams, multiplier: grams / 250, confidence: 0.9 };
+          if (grams < 180)
+            return {
+              category: 'small',
+              grams,
+              multiplier: grams / 250,
+              confidence: 0.9,
+            };
+          if (grams < 320)
+            return {
+              category: 'medium',
+              grams,
+              multiplier: grams / 250,
+              confidence: 0.9,
+            };
+          return {
+            category: 'large',
+            grams,
+            multiplier: grams / 250,
+            confidence: 0.9,
+          };
         }
-        if (q.includes('small')) return { ...categories.small, category: 'small' };
-        if (q.includes('medium')) return { ...categories.medium, category: 'medium' };
-        if (q.includes('large')) return { ...categories.large, category: 'large' };
+        if (q.includes('small'))
+          return { ...categories.small, category: 'small' };
+        if (q.includes('medium'))
+          return { ...categories.medium, category: 'medium' };
+        if (q.includes('large'))
+          return { ...categories.large, category: 'large' };
       }
 
       // Try parsing servingSizeText from AI response
@@ -240,29 +260,56 @@ router.post('/analyze', upload.single('image'), async (req, res) => {
         const gramsMatch = s.match(/(\d+)\s?g/);
         if (gramsMatch) {
           const grams = parseInt(gramsMatch[1], 10);
-          if (grams < 180) return { category: 'small', grams, multiplier: grams / 250, confidence: 0.8 };
-          if (grams < 320) return { category: 'medium', grams, multiplier: grams / 250, confidence: 0.85 };
-          return { category: 'large', grams, multiplier: grams / 250, confidence: 0.8 };
+          if (grams < 180)
+            return {
+              category: 'small',
+              grams,
+              multiplier: grams / 250,
+              confidence: 0.8,
+            };
+          if (grams < 320)
+            return {
+              category: 'medium',
+              grams,
+              multiplier: grams / 250,
+              confidence: 0.85,
+            };
+          return {
+            category: 'large',
+            grams,
+            multiplier: grams / 250,
+            confidence: 0.8,
+          };
         }
-        if (s.includes('small')) return { ...categories.small, category: 'small' };
-        if (s.includes('medium')) return { ...categories.medium, category: 'medium' };
-        if (s.includes('large')) return { ...categories.large, category: 'large' };
+        if (s.includes('small'))
+          return { ...categories.small, category: 'small' };
+        if (s.includes('medium'))
+          return { ...categories.medium, category: 'medium' };
+        if (s.includes('large'))
+          return { ...categories.large, category: 'large' };
       }
 
       // Fallback: use image byte size heuristic
       const bytes = imageBytes || 0;
       // thresholds chosen conservatively
-      if (bytes > 200000) return { ...categories.large, category: 'large', confidence: 0.45 };
-      if (bytes > 90000) return { ...categories.medium, category: 'medium', confidence: 0.5 };
+      if (bytes > 200000)
+        return { ...categories.large, category: 'large', confidence: 0.45 };
+      if (bytes > 90000)
+        return { ...categories.medium, category: 'medium', confidence: 0.5 };
       return { ...categories.small, category: 'small', confidence: 0.45 };
     };
 
     // Preserve original nutrition values then scale based on estimate
     const providedQuantity = req.body.quantity;
-    const portion = estimatePortion(providedQuantity, analysisData.servingSize, imageBuffer.length);
+    const portion = estimatePortion(
+      providedQuantity,
+      analysisData.servingSize,
+      imageBuffer.length
+    );
 
     // Save original nutrition snapshot
-    const originalCalories = typeof analysisData.calories === 'number' ? analysisData.calories : 0;
+    const originalCalories =
+      typeof analysisData.calories === 'number' ? analysisData.calories : 0;
     const originalMacros = {
       protein: analysisData.macronutrients?.protein ?? 0,
       carbs: analysisData.macronutrients?.carbs ?? 0,
@@ -273,13 +320,14 @@ router.post('/analyze', upload.single('image'), async (req, res) => {
 
     // Compute adjusted values by multiplier
     const multiplier = portion.multiplier || 1;
-    const adjustedCalories = Math.round(originalCalories * multiplier * 10) / 10;
+    const adjustedCalories =
+      Math.round(originalCalories * multiplier * 10) / 10;
     const adjustedMacros = {
-      protein: Math.round((originalMacros.protein * multiplier) * 10) / 10,
-      carbs: Math.round((originalMacros.carbs * multiplier) * 10) / 10,
-      fat: Math.round((originalMacros.fat * multiplier) * 10) / 10,
-      fiber: Math.round((originalMacros.fiber * multiplier) * 10) / 10,
-      sugar: Math.round((originalMacros.sugar * multiplier) * 10) / 10,
+      protein: Math.round(originalMacros.protein * multiplier * 10) / 10,
+      carbs: Math.round(originalMacros.carbs * multiplier * 10) / 10,
+      fat: Math.round(originalMacros.fat * multiplier * 10) / 10,
+      fiber: Math.round(originalMacros.fiber * multiplier * 10) / 10,
+      sugar: Math.round(originalMacros.sugar * multiplier * 10) / 10,
     };
 
     // Merge adjusted values back into analysisData so UI shows scaled numbers
@@ -356,34 +404,57 @@ router.patch('/history/:id/portion', async (req, res) => {
     if (!meal) return res.status(404).json({ error: 'Meal not found' });
 
     // Determine original nutrition snapshot
-    const original = meal.originalNutrition && meal.originalNutrition.calories ? meal.originalNutrition : {
-      calories: meal.calories || 0,
-      macronutrients: {
-        protein: meal.macronutrients?.protein ?? meal.protein ?? 0,
-        carbs: meal.macronutrients?.carbs ?? meal.carbs ?? 0,
-        fat: meal.macronutrients?.fat ?? meal.fat ?? 0,
-        fiber: meal.macronutrients?.fiber ?? 0,
-        sugar: meal.macronutrients?.sugar ?? 0,
-      },
-    };
+    const original =
+      meal.originalNutrition && meal.originalNutrition.calories
+        ? meal.originalNutrition
+        : {
+            calories: meal.calories || 0,
+            macronutrients: {
+              protein: meal.macronutrients?.protein ?? meal.protein ?? 0,
+              carbs: meal.macronutrients?.carbs ?? meal.carbs ?? 0,
+              fat: meal.macronutrients?.fat ?? meal.fat ?? 0,
+              fiber: meal.macronutrients?.fiber ?? 0,
+              sugar: meal.macronutrients?.sugar ?? 0,
+            },
+          };
 
     // Compute multiplier
     let newMultiplier = 1;
-    if (typeof portion.multiplier === 'number' && isFinite(portion.multiplier) && portion.multiplier > 0) {
+    if (
+      typeof portion.multiplier === 'number' &&
+      isFinite(portion.multiplier) &&
+      portion.multiplier > 0
+    ) {
       newMultiplier = portion.multiplier;
-    } else if (typeof portion.grams === 'number' && isFinite(portion.grams) && portion.grams > 0) {
+    } else if (
+      typeof portion.grams === 'number' &&
+      isFinite(portion.grams) &&
+      portion.grams > 0
+    ) {
       const baseGrams = meal.portionEstimate?.grams || 250; // default medium
       newMultiplier = portion.grams / baseGrams;
     }
 
     // Apply multiplier
-    const adjustedCalories = Math.round((original.calories * newMultiplier) * 10) / 10;
+    const adjustedCalories =
+      Math.round(original.calories * newMultiplier * 10) / 10;
     const adjustedMacros = {
-      protein: Math.round(((original.macronutrients?.protein ?? 0) * newMultiplier) * 10) / 10,
-      carbs: Math.round(((original.macronutrients?.carbs ?? 0) * newMultiplier) * 10) / 10,
-      fat: Math.round(((original.macronutrients?.fat ?? 0) * newMultiplier) * 10) / 10,
-      fiber: Math.round(((original.macronutrients?.fiber ?? 0) * newMultiplier) * 10) / 10,
-      sugar: Math.round(((original.macronutrients?.sugar ?? 0) * newMultiplier) * 10) / 10,
+      protein:
+        Math.round(
+          (original.macronutrients?.protein ?? 0) * newMultiplier * 10
+        ) / 10,
+      carbs:
+        Math.round((original.macronutrients?.carbs ?? 0) * newMultiplier * 10) /
+        10,
+      fat:
+        Math.round((original.macronutrients?.fat ?? 0) * newMultiplier * 10) /
+        10,
+      fiber:
+        Math.round((original.macronutrients?.fiber ?? 0) * newMultiplier * 10) /
+        10,
+      sugar:
+        Math.round((original.macronutrients?.sugar ?? 0) * newMultiplier * 10) /
+        10,
     };
 
     // Update meal

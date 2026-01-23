@@ -10,9 +10,20 @@ const makeFakeAnalysis = (imageUrl, quantity) => {
   const id = uuidv4();
   const createdAt = new Date();
   const baseCalories = 250; // base
-  const macronutrients = { protein: 12, carbs: 30, fat: 10, fiber: 3, sugar: 5 };
+  const macronutrients = {
+    protein: 12,
+    carbs: 30,
+    fat: 10,
+    fiber: 3,
+    sugar: 5,
+  };
   const originalNutrition = { calories: baseCalories, macronutrients };
-  const portionEstimate = { category: 'medium', grams: 250, multiplier: 1, confidence: 0.7 };
+  const portionEstimate = {
+    category: 'medium',
+    grams: 250,
+    multiplier: 1,
+    confidence: 0.7,
+  };
 
   return {
     _id: id,
@@ -35,8 +46,16 @@ const makeFakeAnalysis = (imageUrl, quantity) => {
       vitaminD: 0,
       vitaminB12: 0,
     },
-    nutritionBreakdown: { proteinPercent: 20, carbsPercent: 60, fatPercent: 20 },
-    healthMetrics: { healthScore: 70, benefits: ['Protein source'], concerns: [] },
+    nutritionBreakdown: {
+      proteinPercent: 20,
+      carbsPercent: 60,
+      fatPercent: 20,
+    },
+    healthMetrics: {
+      healthScore: 70,
+      benefits: ['Protein source'],
+      concerns: [],
+    },
     analysis: 'This is a mock analysis.',
     recommendation: 'Add vegetables for fiber.',
     createdAt,
@@ -46,13 +65,18 @@ const makeFakeAnalysis = (imageUrl, quantity) => {
 };
 
 // POST /api/analyze - accept either multipart or JSON in dev
-router.post('/analyze', express.urlencoded({ extended: true }), express.json(), (req, res) => {
-  const quantity = req.body.quantity || req.query.quantity || 'Not specified';
-  const imagePath = '/uploads/mock.png';
-  const analysis = makeFakeAnalysis(imagePath, quantity);
-  meals.unshift(analysis);
-  res.json({ message: 'Analysis successful (mock)', data: analysis });
-});
+router.post(
+  '/analyze',
+  express.urlencoded({ extended: true }),
+  express.json(),
+  (req, res) => {
+    const quantity = req.body.quantity || req.query.quantity || 'Not specified';
+    const imagePath = '/uploads/mock.png';
+    const analysis = makeFakeAnalysis(imagePath, quantity);
+    meals.unshift(analysis);
+    res.json({ message: 'Analysis successful (mock)', data: analysis });
+  }
+);
 
 // GET /api/history
 router.get('/history', (req, res) => {
@@ -72,21 +96,31 @@ router.delete('/history', (req, res) => {
 router.patch('/history/:id/portion', express.json(), (req, res) => {
   const { id } = req.params;
   const { portion } = req.body;
-  const idx = meals.findIndex((m) => m._id === id);
+  const idx = meals.findIndex(m => m._id === id);
   if (idx === -1) return res.status(404).json({ error: 'Meal not found' });
 
   const meal = meals[idx];
   const original = meal.originalNutrition || meal;
   let newMultiplier = 1;
-  if (portion && typeof portion.multiplier === 'number') newMultiplier = portion.multiplier;
-  else if (portion && typeof portion.grams === 'number') newMultiplier = portion.grams / (meal.portionEstimate?.grams || 250);
+  if (portion && typeof portion.multiplier === 'number')
+    newMultiplier = portion.multiplier;
+  else if (portion && typeof portion.grams === 'number')
+    newMultiplier = portion.grams / (meal.portionEstimate?.grams || 250);
 
-  meal.portionEstimate = { ...(meal.portionEstimate || {}), ...portion, multiplier: newMultiplier };
-  meal.calories = Math.round((original.calories * newMultiplier) * 10) / 10;
+  meal.portionEstimate = {
+    ...(meal.portionEstimate || {}),
+    ...portion,
+    multiplier: newMultiplier,
+  };
+  meal.calories = Math.round(original.calories * newMultiplier * 10) / 10;
   meal.macronutrients = meal.macronutrients || {};
-  meal.macronutrients.protein = Math.round(((original.macronutrients?.protein ?? 0) * newMultiplier) * 10) / 10;
-  meal.macronutrients.carbs = Math.round(((original.macronutrients?.carbs ?? 0) * newMultiplier) * 10) / 10;
-  meal.macronutrients.fat = Math.round(((original.macronutrients?.fat ?? 0) * newMultiplier) * 10) / 10;
+  meal.macronutrients.protein =
+    Math.round((original.macronutrients?.protein ?? 0) * newMultiplier * 10) /
+    10;
+  meal.macronutrients.carbs =
+    Math.round((original.macronutrients?.carbs ?? 0) * newMultiplier * 10) / 10;
+  meal.macronutrients.fat =
+    Math.round((original.macronutrients?.fat ?? 0) * newMultiplier * 10) / 10;
 
   meals[idx] = meal;
   res.json({ message: 'Portion updated (mock)', data: meal });

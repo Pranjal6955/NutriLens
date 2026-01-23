@@ -27,8 +27,13 @@ const COLORS = ['#3b82f6', '#eab308', '#ec4899']; // Protein (blue), Carbs (yell
 
 export const AnalysisResults: React.FC<AnalysisResultsProps> = ({ result }) => {
   // Portion adjustment state (client-side only)
-  const initialPortion = result.portionEstimate || { category: undefined, grams: undefined, multiplier: 1, confidence: 0 };
-  const [portion, setPortion] = useState(initialPortion as any);
+  const initialPortion = result.portionEstimate || {
+    category: undefined,
+    grams: undefined,
+    multiplier: 1,
+    confidence: 0,
+  };
+  const [portion, setPortion] = useState(initialPortion);
   const [localOriginalNutrition, setLocalOriginalNutrition] = useState(
     result.originalNutrition || {
       calories: result.calories || 0,
@@ -37,24 +42,36 @@ export const AnalysisResults: React.FC<AnalysisResultsProps> = ({ result }) => {
         carbs: result.macronutrients?.carbs ?? result.carbs ?? 0,
         fat: result.macronutrients?.fat ?? result.fat ?? 0,
       },
-    }
+    },
   );
 
   const recalc = useMemo(() => {
     const origCalories = localOriginalNutrition?.calories ?? result.calories ?? 0;
     const origMacros = {
-      protein: localOriginalNutrition?.macronutrients?.protein ?? result.macronutrients?.protein ?? result.protein ?? 0,
-      carbs: localOriginalNutrition?.macronutrients?.carbs ?? result.macronutrients?.carbs ?? result.carbs ?? 0,
-      fat: localOriginalNutrition?.macronutrients?.fat ?? result.macronutrients?.fat ?? result.fat ?? 0,
+      protein:
+        localOriginalNutrition?.macronutrients?.protein ??
+        result.macronutrients?.protein ??
+        result.protein ??
+        0,
+      carbs:
+        localOriginalNutrition?.macronutrients?.carbs ??
+        result.macronutrients?.carbs ??
+        result.carbs ??
+        0,
+      fat:
+        localOriginalNutrition?.macronutrients?.fat ??
+        result.macronutrients?.fat ??
+        result.fat ??
+        0,
     };
 
     const multiplier = portion.multiplier ?? 1;
 
     return {
-      calories: Math.round((origCalories * multiplier) * 10) / 10,
-      protein: Math.round((origMacros.protein * multiplier) * 10) / 10,
-      carbs: Math.round((origMacros.carbs * multiplier) * 10) / 10,
-      fat: Math.round((origMacros.fat * multiplier) * 10) / 10,
+      calories: Math.round(origCalories * multiplier * 10) / 10,
+      protein: Math.round(origMacros.protein * multiplier * 10) / 10,
+      carbs: Math.round(origMacros.carbs * multiplier * 10) / 10,
+      fat: Math.round(origMacros.fat * multiplier * 10) / 10,
     };
   }, [portion, result, localOriginalNutrition]);
 
@@ -88,7 +105,8 @@ export const AnalysisResults: React.FC<AnalysisResultsProps> = ({ result }) => {
           <div className='flex items-center space-x-2 mt-2'>
             {portion?.category && (
               <span className='bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-full text-xs font-medium'>
-                Estimated: {portion.category}{portion.grams ? ` • ${portion.grams} g` : ''}
+                Estimated: {portion.category}
+                {portion.grams ? ` • ${portion.grams} g` : ''}
               </span>
             )}
             <span className='text-xs text-gray-400'>Estimated portion — adjust if needed</span>
@@ -96,30 +114,36 @@ export const AnalysisResults: React.FC<AnalysisResultsProps> = ({ result }) => {
           {/* Manual adjustment controls */}
           <div className='flex items-center gap-2 mt-2'>
             {['small', 'medium', 'large'].map((c) => {
-              const map: any = { small: 0.8, medium: 1.0, large: 1.3 };
-              const gramsMap: any = { small: 150, medium: 250, large: 400 };
+              const map: Record<string, number> = { small: 0.8, medium: 1.0, large: 1.3 };
+              const gramsMap: Record<string, number> = { small: 150, medium: 250, large: 400 };
               return (
-                  <button
-                    key={c}
-                    onClick={async () => {
-                      const newPortion = { category: c, multiplier: map[c], grams: gramsMap[c], confidence: 0.5 };
-                      // Optimistic UI
-                      setPortion(newPortion as any);
-                      try {
-                        const updated = await savePortionAdjustment(result._id, newPortion);
-                        // If backend returns updated originalNutrition or portionEstimate, sync local state
-                        if (updated.originalNutrition) setLocalOriginalNutrition(updated.originalNutrition);
-                        if (updated.portionEstimate) setPortion(updated.portionEstimate);
-                      } catch (e) {
-                        // Revert optimistic change on failure
-                        setPortion(initialPortion as any);
-                      }
-                    }}
-                    className={`px-3 py-1 rounded-lg text-sm border ${portion?.category === c ? 'bg-brand-primary text-white' : 'bg-transparent'}`}
-                  >
-                    {c}
-                  </button>
-                );
+                <button
+                  key={c}
+                  onClick={async () => {
+                    const newPortion = {
+                      category: c,
+                      multiplier: map[c],
+                      grams: gramsMap[c],
+                      confidence: 0.5,
+                    };
+                    // Optimistic UI
+                    setPortion(newPortion);
+                    try {
+                      const updated = await savePortionAdjustment(result._id, newPortion);
+                      // If backend returns updated originalNutrition or portionEstimate, sync local state
+                      if (updated.originalNutrition)
+                        setLocalOriginalNutrition(updated.originalNutrition);
+                      if (updated.portionEstimate) setPortion(updated.portionEstimate);
+                    } catch {
+                      // Revert optimistic change on failure
+                      setPortion(initialPortion);
+                    }
+                  }}
+                  className={`px-3 py-1 rounded-lg text-sm border ${portion?.category === c ? 'bg-brand-primary text-white' : 'bg-transparent'}`}
+                >
+                  {c}
+                </button>
+              );
             })}
           </div>
           <div className='flex items-center mt-1 space-x-2'>
