@@ -3,8 +3,8 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-app.use(cookieParser());
 const app = express();
+app.use(cookieParser());
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const multer = require('multer');
@@ -14,16 +14,20 @@ const fs = require('fs');
 
 const authRoutes = require('./routes/authRoutes');
 
-// Validate required environment variables
-const requiredEnvVars = ['GEMINI_API_KEY', 'MONGO_URI', 'JWT_SECRET'];
-for (const envVar of requiredEnvVars) {
-  if (!process.env[envVar]) {
-    console.error(`Missing required environment variable: ${envVar}`);
-    process.exit(1);
+// Validate required environment variables unless running in DEV_MOCK mode
+if (process.env.DEV_MOCK !== 'true') {
+  const requiredEnvVars = ['GEMINI_API_KEY', 'MONGO_URI', 'JWT_SECRET'];
+  for (const envVar of requiredEnvVars) {
+    if (!process.env[envVar]) {
+      console.error(`Missing required environment variable: ${envVar}`);
+      process.exit(1);
+    }
   }
+} else {
+  console.log('DEV_MOCK mode active: skipping external service env var checks');
 }
 
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5000;
 
 // Security middleware
 app.use(helmet());
@@ -48,6 +52,12 @@ const allowedOrigins = (process.env.CORS_ALLOWED_ORIGINS || '')
   .split(',')
   .map(origin => origin.trim())
   .filter(origin => origin.length > 0);
+
+// In DEV_MOCK mode, allow localhost origins for local development
+if (process.env.DEV_MOCK === 'true') {
+  allowedOrigins.push('http://localhost:5173', 'http://localhost:3000', 'http://127.0.0.1:5173');
+  console.log('DEV_MOCK: Allowing local origins for CORS');
+}
 
 const corsOptions = {
   origin: (origin, callback) => {
@@ -77,9 +87,15 @@ try {
   process.exit(1);
 }
 
-// Routes
-const analyzeRoutes = require('./routes/analyze');
-app.use('/api', uploadLimiter, analyzeRoutes);
+// Routes: use mock routes when DEV_MOCK=true for local QA without external services
+if (process.env.DEV_MOCK === 'true') {
+  console.log('DEV_MOCK is enabled — mounting mock analysis routes');
+  const mockRoutes = require('./routes/mockAnalyze');
+  app.use('/api', mockRoutes);
+} else {
+  const analyzeRoutes = require('./routes/analyze');
+  app.use('/api', uploadLimiter, analyzeRoutes);
+}
 
 app.get('/', (req, res) => {
   res.send('NutriLens Backend is running');
@@ -111,6 +127,14 @@ const connectDB = require('./config/db');
 
 const startServer = async () => {
   try {
+    if (process.env.DEV_MOCK === 'true') {
+      // Skip DB connection in dev mock mode
+      app.listen(PORT, () => {
+        console.log(`Server running in DEV_MOCK mode on port ${PORT}`);
+      });
+      return;
+    }
+
     await connectDB();
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
