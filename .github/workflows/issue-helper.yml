@@ -1,0 +1,75 @@
+name: Issue Analyzer & Responder
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  analyze-issue:
+    runs-on: ubuntu-latest
+    if: github.event.issue.user.login != github.repository_owner
+    permissions:
+      issues: write
+      pull-requests: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Analyze, Label and Assign
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          REPO: ${{ github.repository }}
+          OWNER: ${{ github.repository_owner }}
+        run: |
+          # 1. Assign to Owner
+          gh issue edit "$ISSUE_NUMBER" --add-assignee "$OWNER"
+
+          # 2. Keyword-based Labeling
+          # Convert title and body to lowercase for matching
+          CONTENT=$(echo "$ISSUE_TITLE $ISSUE_BODY" | tr '[:upper:]' '[:lower:]')
+          
+          if [[ "$CONTENT" == *"bug"* ]] || [[ "$CONTENT" == *"error"* ]] || [[ "$CONTENT" == *"crash"* ]] || [[ "$CONTENT" == *"fail"* ]]; then
+            gh issue edit "$ISSUE_NUMBER" --add-label "bug" || echo "Label 'bug' failed"
+          fi
+          
+          if [[ "$CONTENT" == *"feature"* ]] || [[ "$CONTENT" == *"add"* ]] || [[ "$CONTENT" == *"improvement"* ]] || [[ "$CONTENT" == *"enhancement"* ]]; then
+            gh issue edit "$ISSUE_NUMBER" --add-label "enhancement" || echo "Label 'enhancement' failed"
+          fi
+
+          if [[ "$CONTENT" == *"document"* ]] || [[ "$CONTENT" == *"readme"* ]] || [[ "$CONTENT" == *"fix typo"* ]]; then
+            gh issue edit "$ISSUE_NUMBER" --add-label "documentation" || echo "Label 'documentation' failed"
+          fi
+
+          # 3. Define the welcome message with Contribution Guide (Readme since no CONTRIBUTING.md)
+          WELCOME_MSG="Hi @${{ github.event.issue.user.login }}! 👋\n\nThank you for opening this issue. Our team will review it soon and get back to you.\n\n📚 **New here?** Please check out our [**Readme.md**](https://github.com/$REPO/blob/main/Readme.md) for contribution guidelines!\n\n"
+          
+          echo "Searching for related issues and PRs for: $ISSUE_TITLE"
+          
+          # 4. Search for related records
+          RELATED_ISSUES=$(gh search issues "$ISSUE_TITLE" --repo "$REPO" --limit 10 --json number,title,url | \
+            jq -r --arg current "$ISSUE_NUMBER" '.[] | select(.number != ($current | tonumber)) | "- [#" + (.number | toString) + "](" + .url + "): " + .title' | head -n 5)
+
+          RELATED_PRS=$(gh search prs "$ISSUE_TITLE" --repo "$REPO" --limit 5 --json number,title,url | \
+            jq -r '.[] | "- [#" + (.number | toString) + "](" + .url + "): " + .title')
+
+          # 5. Build the final response
+          FINAL_MSG="$WELCOME_MSG"
+          # ... rest of message building logic
+          
+          if [ -n "$RELATED_ISSUES" ]; then
+            FINAL_MSG="${FINAL_MSG}### Related Issues Found:\n${RELATED_ISSUES}\n\n"
+          fi
+          
+          if [ -n "$RELATED_PRS" ]; then
+            FINAL_MSG="${FINAL_MSG}### Related Pull Requests Found:\n${RELATED_PRS}\n\n"
+          fi
+          
+          if [ -z "$RELATED_ISSUES" ] && [ -z "$RELATED_PRS" ]; then
+             FINAL_MSG="${FINAL_MSG}*No highly related issues or PRs were found, but we'll take a look as soon as possible.*"
+          fi
+
+          # 5. Post the comment
+          gh issue comment "$ISSUE_NUMBER" --body "$(echo -e "$FINAL_MSG")"

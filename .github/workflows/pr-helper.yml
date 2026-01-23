@@ -1,0 +1,65 @@
+name: PR Helper & Engagement
+
+on:
+  pull_request:
+    types: [opened, closed]
+
+jobs:
+  pr-response:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Add Done Label
+        if: github.event.action == 'closed'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          gh pr edit "$PR_NUMBER" --add-label "done" || echo "Label 'done' could not be added."
+
+      - name: Auto-Assign & Label PR
+        if: github.event.action == 'opened'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          OWNER: ${{ github.repository_owner }}
+        run: |
+          # 1. Assign to Owner
+          gh pr edit "$PR_NUMBER" --add-assignee "$OWNER"
+
+          # 2. Keyword-based Labeling
+          CONTENT=$(echo "$PR_TITLE $PR_BODY" | tr '[:upper:]' '[:lower:]')
+          if [[ "$CONTENT" == *"bug"* ]] || [[ "$CONTENT" == *"fix"* ]]; then
+            gh pr edit "$PR_NUMBER" --add-label "bug" || echo "Label 'bug' failed"
+          fi
+          if [[ "$CONTENT" == *"feature"* ]] || [[ "$CONTENT" == *"add"* ]]; then
+            gh pr edit "$PR_NUMBER" --add-label "enhancement" || echo "Label 'enhancement' failed"
+          fi
+
+      - name: Respond to Opened PR
+        if: github.event.action == 'opened' && github.event.pull_request.user.login != github.repository_owner
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          USER_LOGIN: ${{ github.event.pull_request.user.login }}
+          REPO: ${{ github.repository }}
+        run: |
+          MSG="### Hi @$USER_LOGIN! 👋 Thank you for your contribution!\n\nWe really appreciate you taking the time to improve **NutriLens**. Our team will review your Pull Request shortly.\n\n📚 **New here?** Please check out our [**Readme.md**](https://github.com/$REPO/blob/main/Readme.md) for contribution guidelines!\n\n---\n\n🌟 **Support us!** If you find this project helpful, please consider giving us a star on GitHub! It helps more developers discover the project. [**Star NutriLens**](https://github.com/$REPO)"
+          gh pr comment "$PR_NUMBER" --body "$(echo -e "$MSG")"
+
+      - name: Respond to Merged PR
+        if: github.event.action == 'closed' && github.event.pull_request.merged == true && github.event.pull_request.user.login != github.repository_owner
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          USER_LOGIN: ${{ github.event.pull_request.user.login }}
+        run: |
+          MSG="### 🎉 Congratulations, @$USER_LOGIN! Your PR has been merged!\n\nThank you for your valuable contribution to the codebase. Your changes are now part of the project! 🚀\n\n---\n\n✨ **Love the project?** Show your support by giving us a star! [**Click here to Star!**](https://github.com/${{ github.repository }})\n\n*(This is an automated message to celebrate your contribution!)*"
+          gh pr comment "$PR_NUMBER" --body "$(echo -e "$MSG")"

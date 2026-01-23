@@ -14,6 +14,16 @@ jobs:
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
 
+    - name: Remove existing size labels
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PR_NUMBER: ${{ github.event.pull_request.number || github.event.number }}
+      run: |
+        # Fetch current labels and remove any that start with 'size/'
+        gh pr view "$PR_NUMBER" --json labels -q '.labels[].name' | grep '^size/' | while read -r label; do
+          gh pr edit "$PR_NUMBER" --remove-label "$label"
+        done
+
     - name: Label PR size
       uses: codelytv/pr-size-labeler@v1
       with:

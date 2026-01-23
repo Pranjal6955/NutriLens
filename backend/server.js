@@ -3,6 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+
 const app = express();
 app.use(cookieParser());
 const helmet = require('helmet');
@@ -22,6 +23,12 @@ if (process.env.DEV_MOCK !== 'true') {
       console.error(`Missing required environment variable: ${envVar}`);
       process.exit(1);
     }
+// Validate required environment variables
+const requiredEnvVars = ['MONGO_URI', 'JWT_SECRET'];
+for (const envVar of requiredEnvVars) {
+  if (!process.env[envVar]) {
+    console.error(`Missing required environment variable: ${envVar}`);
+    process.exit(1);
   }
 } else {
   console.log('DEV_MOCK mode active: skipping external service env var checks');
@@ -73,6 +80,7 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(express.json({ limit: '5mb' }));
+app.use(cookieParser());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/api/auth', authRoutes);
