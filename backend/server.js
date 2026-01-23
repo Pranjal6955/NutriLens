@@ -16,7 +16,7 @@ const fs = require('fs');
 const authRoutes = require('./routes/authRoutes');
 
 // Validate required environment variables
-const requiredEnvVars = ['MONGO_URI', 'JWT_SECRET'];
+const requiredEnvVars = ['GEMINI_API_KEY', 'MONGO_URI', 'JWT_SECRET'];
 for (const envVar of requiredEnvVars) {
   if (!process.env[envVar]) {
     console.error(`Missing required environment variable: ${envVar}`);
@@ -24,7 +24,7 @@ for (const envVar of requiredEnvVars) {
   }
 }
 
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5000;
 
 // Security middleware
 app.use(helmet());
