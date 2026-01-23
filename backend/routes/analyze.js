@@ -179,34 +179,7 @@ router.post('/analyze', upload.single('image'), async (req, res) => {
       logger.info(`AI analysis successful: ${requestId}`);
     } catch (e) {
       logger.error(`JSON parsing failed: ${requestId}`, e);
-      analysisData = {
-        foodName: 'Unknown',
-        servingSize: 'Unknown',
-        isHealthy: false,
-        calories: 0,
-        macronutrients: { protein: 0, carbs: 0, fat: 0, fiber: 0, sugar: 0 },
-        micronutrients: {
-          sodium: 0,
-          cholesterol: 0,
-          vitaminA: 0,
-          vitaminC: 0,
-          calcium: 0,
-          iron: 0,
-          potassium: 0,
-          magnesium: 0,
-          zinc: 0,
-          vitaminD: 0,
-          vitaminB12: 0,
-        },
-        nutritionBreakdown: {
-          proteinPercent: 0,
-          carbsPercent: 0,
-          fatPercent: 0,
-        },
-        healthMetrics: { healthScore: 0, benefits: [], concerns: [] },
-        analysis: 'Could not parse AI response.',
-        recommendation: 'Try taking a clearer photo.',
-      };
+      throw new Error('Failed to parse AI response');
     }
 
     // Portion estimation heuristics

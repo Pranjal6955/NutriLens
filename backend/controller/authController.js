@@ -2,6 +2,7 @@ const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const sendEmail = require('../utils/sendEmail');
+const logger = require('../utils/logger');
 
 exports.register = async (req, res) => {
   try {
@@ -78,14 +79,14 @@ exports.register = async (req, res) => {
     `,
       });
     } catch (emailErr) {
-      console.warn('Welcome email failed:', emailErr.message);
+      logger.warn('Welcome email failed:', emailErr.message);
     }
 
     return res.status(201).json({
       message: 'Registered successfully',
     });
   } catch (err) {
-    console.error('Registration error:', err);
+    logger.error('Registration error:', err);
     return res.status(500).json({
       message: 'Registration failed. Please try again later.',
     });
@@ -141,7 +142,7 @@ exports.login = async (req, res) => {
       },
     });
   } catch (err) {
-    console.error('Login error:', err);
+    logger.error('Login error:', err);
     return res.status(500).json({
       message: 'Login failed. Please try again later.',
     });

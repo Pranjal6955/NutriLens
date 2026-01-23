@@ -3,7 +3,6 @@ const rateLimit = require('express-rate-limit');
 
 const authMiddleware = require('../middleware/authMiddleware');
 const { register, login, logout } = require('../controller/authController');
-const authMiddleware = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
