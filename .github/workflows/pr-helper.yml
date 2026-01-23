@@ -1,0 +1,31 @@
+name: PR Helper & Engagement
+
+on:
+  pull_request:
+    types: [opened, closed]
+
+jobs:
+  pr-response:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Respond to Opened PR
+        if: github.event.action == 'opened'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          USER_LOGIN: ${{ github.event.pull_request.user.login }}
+        run: |
+          MSG="### Hi @$USER_LOGIN! 👋 Thank you for your contribution!\n\nWe really appreciate you taking the time to improve **NutriLens**. Our team will review your Pull Request shortly.\n\n---\n\n🌟 **Support us!** If you find this project helpful, please consider giving us a star on GitHub! It helps more developers discover the project. [**Star NutriLens**](https://github.com/${{ github.repository }})"
+          gh pr comment "$PR_NUMBER" --body "$(echo -e "$MSG")"
+
+      - name: Respond to Merged PR
+        if: github.event.action == 'closed' && github.event.pull_request.merged == true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          USER_LOGIN: ${{ github.event.pull_request.user.login }}
+        run: |
+          MSG="### 🎉 Congratulations, @$USER_LOGIN! Your PR has been merged!\n\nThank you for your valuable contribution to the codebase. Your changes are now part of the project! 🚀\n\n---\n\n✨ **Love the project?** Show your support by giving us a star! [**Click here to Star!**](https://github.com/${{ github.repository }})\n\n*(This is an automated message to celebrate your contribution!)*"
+          gh pr comment "$PR_NUMBER" --body "$(echo -e "$MSG")"
