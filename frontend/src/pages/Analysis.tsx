@@ -14,6 +14,7 @@ export const Analysis: React.FC = () => {
   const [preview, setPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<MealData | null>(null);
+  const [error, setError] = useState('');
 
   // Initialize from location state
   useEffect(() => {
@@ -43,6 +44,7 @@ export const Analysis: React.FC = () => {
   const handleUpload = async () => {
     if (!file) return;
     setLoading(true);
+    setError('');
     try {
       const data = await analyzeImage(file, quantity);
       setResult(data);
@@ -61,7 +63,7 @@ export const Analysis: React.FC = () => {
           : typeof err === 'string'
             ? err
             : 'An unknown error occurred.';
-      alert(`Analysis failed: ${errorMessage} `);
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -72,6 +74,7 @@ export const Analysis: React.FC = () => {
     setPreview(null);
     setResult(null);
     setQuantity('');
+    setError('');
     navigate('/');
   };
 
@@ -82,6 +85,12 @@ export const Analysis: React.FC = () => {
       exit={{ opacity: 0, y: -20 }}
       className='space-y-8'
     >
+      {error && (
+        <div className='rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-900/30 dark:text-red-200'>
+          {error}
+        </div>
+      )}
+
       <AnimatePresence mode='wait'>
         {preview && (
           <ImagePreview

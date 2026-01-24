@@ -1,6 +1,10 @@
-import { History } from 'lucide-react';
+import { useState } from 'react';
+import { History, LogOut } from 'lucide-react';
 import { FaGithub } from 'react-icons/fa6';
+import { useNavigate } from 'react-router-dom';
 import { ThemeToggle } from './ThemeToggle';
+import { useAuth } from '../context/AuthContext';
+import { Spinner } from './Spinner';
 
 interface NavbarProps {
   showHistory: boolean;
@@ -8,6 +12,22 @@ interface NavbarProps {
 }
 
 export const Navbar = ({ showHistory, setShowHistory }: NavbarProps) => {
+  const { status, user, logout } = useAuth();
+  const navigate = useNavigate();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await logout();
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout failed', error);
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
+
   return (
     <nav className='fixed top-0 w-full z-50 bg-transparent backdrop-blur-md border-b border-[var(--glass-border)] transition-colors duration-300'>
       <div className='max-w-7xl mx-auto px-4 h-16 flex items-center justify-between'>
@@ -41,6 +61,39 @@ export const Navbar = ({ showHistory, setShowHistory }: NavbarProps) => {
           </a>
 
           <ThemeToggle />
+
+          {status === 'authenticated' ? (
+            <div className='flex items-center gap-2'>
+              <div className='hidden sm:flex flex-col items-end text-right'>
+                <span className='text-sm font-semibold text-gray-800 dark:text-gray-100'>
+                  {user?.userName}
+                </span>
+                <span className='text-xs text-gray-500 dark:text-gray-400'>{user?.email}</span>
+              </div>
+              <button
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className='inline-flex items-center gap-2 rounded-full border border-[var(--glass-border)] px-3 py-2 text-sm font-medium text-gray-700 transition hover:border-white/40 hover:bg-black/5 dark:text-gray-200 dark:hover:bg-white/10'
+              >
+                {isLoggingOut ? <Spinner /> : <LogOut className='h-4 w-4' />} Logout
+              </button>
+            </div>
+          ) : (
+            <div className='flex items-center gap-3'>
+              <button
+                onClick={() => navigate('/login')}
+                className='rounded-full px-4 py-2 text-sm font-semibold text-gray-700 transition hover:text-brand-primary dark:text-gray-200'
+              >
+                Login
+              </button>
+              <button
+                onClick={() => navigate('/signup')}
+                className='rounded-full bg-brand-primary px-4 py-2 text-sm font-semibold text-white shadow-md transition hover:shadow-lg'
+              >
+                Sign up
+              </button>
+            </div>
+          )}
 
           <button
             onClick={() => setShowHistory(!showHistory)}
