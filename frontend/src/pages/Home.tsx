@@ -13,12 +13,14 @@ export const Home: React.FC = () => {
   const handleFileSelect = (file: File) => {
     const payload = { file };
 
-    if (status !== 'authenticated') {
+    if (status === 'unauthenticated') {
       navigate('/login', { state: { from: '/analysis', payload } });
       return;
     }
 
-    navigate('/analysis', { state: payload });
+    if (status === 'authenticated') {
+      navigate('/analysis', { state: payload });
+    }
   };
 
   return (
