@@ -128,11 +128,11 @@ export const Signup = () => {
               </button>
             </div>
             <p className='text-xs text-gray-500'>
-              Must contain uppercase, lowercase, number, and special character (!@#$%^&*).
+              Must contain uppercase, lowercase, number, and one of these special characters: !@#$%^&*.
             </p>
             {password && !validatePasswordStrength(password) && (
               <p className='text-xs text-red-500'>
-                Password must be at least 8 characters and include uppercase, lowercase, number, and special character.
+                Password must be at least 8 characters and include uppercase, lowercase, number, and one of these special characters: !@#$%^&*.
               </p>
             )}
           </div>
