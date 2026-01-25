@@ -47,7 +47,16 @@ export const Signup = () => {
     try {
       await signup(name.trim(), email.trim(), password);
       setSuccess('Account created! Redirecting to login...');
-      setTimeout(() => navigate('/login', { replace: true }), 1000);
+      const prefersReducedMotion =
+        typeof window !== 'undefined' &&
+        typeof window.matchMedia === 'function' &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReducedMotion) {
+        navigate('/login', { replace: true });
+      } else {
+        const redirectDelayMs = 2000;
+        setTimeout(() => navigate('/login', { replace: true }), redirectDelayMs);
+      }
     } catch (err) {
       let message = err instanceof Error ? err.message : 'Unable to sign up. Please try again.';
       // Map backend error to user-friendly message
