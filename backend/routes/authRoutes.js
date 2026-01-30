@@ -2,7 +2,7 @@ const express = require('express');
 const rateLimit = require('express-rate-limit');
 
 const authMiddleware = require('../middleware/authMiddleware');
-const { register, login, logout } = require('../controller/authController');
+const { register, login, logout, googleAuth } = require('../controller/authController');
 
 const router = express.Router();
 
@@ -20,6 +20,7 @@ const authLimiter = rateLimit({
 router.post('/register', authLimiter, register);
 router.post('/login', authLimiter, login);
 router.post('/logout', authLimiter, logout);
+router.post('/google', authLimiter, googleAuth);
 
 // Protected route
 router.get('/dashboard', authMiddleware, (req, res) => {
