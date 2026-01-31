@@ -31,13 +31,12 @@ const App: React.FC = () => {
         const data = await getHistory();
         setHistory(data.data);
       } catch (err) {
-        console.error('Failed to fetch history', err);
+        // Silently handle history fetch errors
       }
     };
 
     fetchHistory();
 
-    // Listen for history updates from other components
     const handleHistoryUpdate = () => {
       if (isAuthenticated) {
         fetchHistory();
@@ -57,14 +56,14 @@ const App: React.FC = () => {
       await clearHistory();
       setHistory([]);
     } catch (err) {
-      console.error('Failed to clear history', err);
+      // Silently handle clear history errors
     }
   };
 
   return (
-    <div className='min-h-screen flex flex-col transition-colors duration-300'>
+    <div className="min-h-screen flex flex-col transition-colors duration-300">
       <Toaster
-        position='top-right'
+        position="top-right"
         toastOptions={{
           duration: 4000,
           style: {
@@ -76,17 +75,15 @@ const App: React.FC = () => {
         }}
       />
       
-      {/* Navbar */}
       <Navbar showHistory={showHistory} setShowHistory={setShowHistory} />
 
-      {/* Main Content */}
-      <main className='flex-1 max-w-4xl mx-auto px-4 pt-32'>
-        <AnimatePresence mode='wait'>
+      <main className="flex-1 max-w-4xl mx-auto px-4 pt-32">
+        <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
-            <Route path='/login' element={<Login />} />
-            <Route path='/signup' element={<Signup />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
             <Route
-              path='/'
+              path="/"
               element={
                 <ProtectedRoute>
                   <Home />
@@ -94,7 +91,7 @@ const App: React.FC = () => {
               }
             />
             <Route
-              path='/analysis'
+              path="/analysis"
               element={
                 <ProtectedRoute>
                   <Analysis />
@@ -118,7 +115,6 @@ const App: React.FC = () => {
         )}
       </main>
 
-      {/* Footer */}
       <Footer />
       {isAuthenticated && <Chatbot />}
       <ScrollToTop />

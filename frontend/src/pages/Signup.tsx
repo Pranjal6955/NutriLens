@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { motion } from 'framer-motion';
 import { Eye, EyeOff, Mail, Lock, User, UserPlus } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { authService } from '../utils/auth';
+import { authService, type ApiError } from '../utils/auth';
 import { GoogleAuthButton } from '../components/GoogleAuthButton';
 
 interface SignupFormData {
@@ -41,7 +41,7 @@ export const Signup: React.FC = () => {
       setTimeout(() => {
         navigate('/login');
       }, 2000);
-    } catch (error: any) {
+    } catch (error: ApiError) {
       const message = error.response?.data?.message || 'Registration failed. Please try again.';
       toast.error(message);
     } finally {
@@ -55,7 +55,7 @@ export const Signup: React.FC = () => {
       await authService.googleAuth(credential);
       toast.success('Google signup successful!');
       navigate('/');
-    } catch (error: any) {
+    } catch (error: ApiError) {
       const message = error.response?.data?.message || 'Google signup failed. Please try again.';
       toast.error(message);
     } finally {

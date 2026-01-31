@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { motion } from 'framer-motion';
 import { Eye, EyeOff, Mail, Lock, LogIn } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { authService } from '../utils/auth';
+import { authService, type ApiError } from '../utils/auth';
 import { GoogleAuthButton } from '../components/GoogleAuthButton';
 
 interface LoginFormData {
@@ -32,7 +32,7 @@ export const Login: React.FC = () => {
       await authService.login(data);
       toast.success('Login successful!');
       navigate(from, { replace: true });
-    } catch (error: any) {
+    } catch (error: ApiError) {
       const message = error.response?.data?.message || 'Login failed. Please try again.';
       toast.error(message);
     } finally {
@@ -46,7 +46,7 @@ export const Login: React.FC = () => {
       await authService.googleAuth(credential);
       toast.success('Google login successful!');
       navigate(from, { replace: true });
-    } catch (error: any) {
+    } catch (error: ApiError) {
       const message = error.response?.data?.message || 'Google login failed. Please try again.';
       toast.error(message);
     } finally {
@@ -154,12 +154,9 @@ export const Login: React.FC = () => {
             </div>
 
             <div className="flex items-center justify-between">
-              <Link
-                to="#"
-                className="text-sm text-brand-primary hover:text-brand-primary/80 transition-colors"
-              >
-                Forgot Password?
-              </Link>
+              <span className="text-sm text-gray-500 dark:text-gray-400">
+                Forgot your password? Contact support
+              </span>
             </div>
 
             <button

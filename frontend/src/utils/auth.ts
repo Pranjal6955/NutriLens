@@ -8,11 +8,6 @@ export const authApi = axios.create({
   withCredentials: true,
 });
 
-// Request interceptor - no need to add token header since using cookies
-authApi.interceptors.request.use((config) => {
-  return config;
-});
-
 // Response interceptor to handle 401 errors
 authApi.interceptors.response.use(
   (response) => response,
@@ -34,6 +29,14 @@ export interface User {
 export interface AuthResponse {
   message: string;
   user?: User;
+}
+
+export interface ApiError {
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
 }
 
 export const authService = {
@@ -71,8 +74,13 @@ export const authService = {
   },
 
   getCurrentUser: (): User | null => {
-    const userStr = localStorage.getItem('user');
-    return userStr ? JSON.parse(userStr) : null;
+    try {
+      const userStr = localStorage.getItem('user');
+      return userStr ? JSON.parse(userStr) : null;
+    } catch (error) {
+      localStorage.removeItem('user');
+      return null;
+    }
   },
 
   isAuthenticated: (): boolean => {
