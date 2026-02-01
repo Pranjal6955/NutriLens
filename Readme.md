@@ -4,7 +4,7 @@
 
 # 🥗 NutriLens - AI-Powered Nutrition Tracker
 
-NutriLens is a modern web application that leverages the power of Artificial Intelligence to analyze food images and provide detailed nutritional information. Simply upload a photo of your meal, and let Gemini AI break down the calories, protein, carbs, and fats for you.
+NutriLens is a modern web application that leverages the power of Artificial Intelligence to analyze food images and provide detailed nutritional information. Simply upload a photo of your meal, and let AI break down the calories, protein, carbs, and fats for you.
 
 
 
