@@ -26,11 +26,11 @@ const App: React.FC = () => {
   useEffect(() => {
     const fetchHistory = async () => {
       if (!isAuthenticated) return;
-      
+
       try {
         const data = await getHistory();
         setHistory(data.data);
-      } catch (err) {
+      } catch {
         // Silently handle history fetch errors
       }
     };
@@ -51,19 +51,19 @@ const App: React.FC = () => {
 
   const handleClearHistory = async () => {
     if (!isAuthenticated) return;
-    
+
     try {
       await clearHistory();
       setHistory([]);
-    } catch (err) {
+    } catch {
       // Silently handle clear history errors
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col transition-colors duration-300">
+    <div className='min-h-screen flex flex-col transition-colors duration-300'>
       <Toaster
-        position="top-right"
+        position='top-right'
         toastOptions={{
           duration: 4000,
           style: {
@@ -74,16 +74,16 @@ const App: React.FC = () => {
           },
         }}
       />
-      
+
       <Navbar showHistory={showHistory} setShowHistory={setShowHistory} />
 
-      <main className="flex-1 max-w-4xl mx-auto px-4 pt-32">
-        <AnimatePresence mode="wait">
+      <main className='flex-1 max-w-4xl mx-auto px-4 pt-32'>
+        <AnimatePresence mode='wait'>
           <Routes location={location} key={location.pathname}>
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
+            <Route path='/login' element={<Login />} />
+            <Route path='/signup' element={<Signup />} />
             <Route
-              path="/"
+              path='/'
               element={
                 <ProtectedRoute>
                   <Home />
@@ -91,7 +91,7 @@ const App: React.FC = () => {
               }
             />
             <Route
-              path="/analysis"
+              path='/analysis'
               element={
                 <ProtectedRoute>
                   <Analysis />

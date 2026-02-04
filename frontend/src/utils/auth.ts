@@ -17,7 +17,7 @@ authApi.interceptors.response.use(
       window.location.href = '/login';
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 export interface User {
@@ -40,7 +40,11 @@ export interface ApiError {
 }
 
 export const authService = {
-  register: async (userData: { username: string; email: string; password: string }): Promise<AuthResponse> => {
+  register: async (userData: {
+    username: string;
+    email: string;
+    password: string;
+  }): Promise<AuthResponse> => {
     const response = await authApi.post('/api/auth/register', {
       userName: userData.username,
       email: userData.email,
@@ -77,7 +81,7 @@ export const authService = {
     try {
       const userStr = localStorage.getItem('user');
       return userStr ? JSON.parse(userStr) : null;
-    } catch (error) {
+    } catch {
       localStorage.removeItem('user');
       return null;
     }

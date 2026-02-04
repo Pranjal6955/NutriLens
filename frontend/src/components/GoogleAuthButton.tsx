@@ -9,14 +9,24 @@ interface GoogleAuthButtonProps {
 
 declare global {
   interface Window {
-    google: any;
+    google: {
+      accounts: {
+        id: {
+          initialize: (config: {
+            client_id: string;
+            callback: (response: { credential?: string }) => void;
+          }) => void;
+          prompt: () => void;
+        };
+      };
+    };
   }
 }
 
 export const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({
   onSuccess,
   onError,
-  text = 'Continue with Google'
+  text = 'Continue with Google',
 }) => {
   useEffect(() => {
     // Load Google Identity Services script
@@ -30,7 +40,7 @@ export const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({
       if (window.google) {
         window.google.accounts.id.initialize({
           client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID || 'your-google-client-id',
-          callback: (response: any) => {
+          callback: (response: { credential?: string }) => {
             if (response.credential) {
               onSuccess(response.credential);
             } else {
@@ -54,14 +64,14 @@ export const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({
 
   return (
     <button
-      type="button"
+      type='button'
       onClick={handleGoogleLogin}
-      className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg
+      className='w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg
                  bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300
                  hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200
-                 font-medium"
+                 font-medium'
     >
-      <FaGoogle className="w-5 h-5 text-red-500" />
+      <FaGoogle className='w-5 h-5 text-red-500' />
       {text}
     </button>
   );
