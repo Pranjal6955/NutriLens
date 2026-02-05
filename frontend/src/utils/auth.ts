@@ -12,7 +12,15 @@ export const authApi = axios.create({
 authApi.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    const status = error.response?.status;
+    const requestUrl: string | undefined = error.config?.url;
+    const isAuthEndpoint =
+      requestUrl?.startsWith('/api/auth/login') ||
+      requestUrl?.startsWith('/api/auth/register') ||
+      requestUrl?.startsWith('/api/auth/google') ||
+      requestUrl?.startsWith('/api/auth/logout');
+
+    if (status === 401 && !isAuthEndpoint) {
       localStorage.removeItem('user');
       window.location.href = '/login';
     }
