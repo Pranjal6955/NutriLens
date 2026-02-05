@@ -50,7 +50,9 @@ export const authService = {
       email: userData.email,
       password: userData.password,
     });
-    return response.data;
+    if (response.data.user) {
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+    }
   },
 
   googleAuth: async (credential: string): Promise<AuthResponse> => {
