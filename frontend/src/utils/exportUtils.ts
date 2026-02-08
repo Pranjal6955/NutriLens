@@ -34,7 +34,7 @@ NutriLens Analysis Report
 Date: ${formatDate(result.createdAt)}
 Food: ${result.foodName}
 Serving Size: ${result.servingSize || 'N/A'}
-Health Score: ${result.healthMetrics?.healthScore || 'N/A'}/100
+Health Score: ${result.healthMetrics?.healthScore ?? 'N/A'}/100
 Status: ${result.isHealthy ? 'Healthy Choice' : 'Indulgent'}
 
 Nutritional Info:
