@@ -50,10 +50,14 @@ Recommendation:
 ${result.recommendation}
 
 Benefits:
-${result.healthMetrics?.benefits?.map((b) => `- ${b}`).join('\n') || 'None'}
+${result.healthMetrics?.benefits && result.healthMetrics.benefits.length
+    ? result.healthMetrics.benefits.map((b) => `- ${b}`).join('\n')
+    : 'None'}
 
 Concerns:
-${result.healthMetrics?.concerns?.map((c) => `- ${c}`).join('\n') || 'None'}
+${result.healthMetrics?.concerns && result.healthMetrics.concerns.length
+    ? result.healthMetrics.concerns.map((c) => `- ${c}`).join('\n')
+    : 'None'}
 
 Micronutrients:
 ${result.micronutrients
