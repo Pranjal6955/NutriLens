@@ -79,7 +79,7 @@ export const generateCSV = (result: MealData) => {
     const rows = [
         ['Category', 'Detail', 'Value', 'Unit'],
         ['General', 'Date', formatDate(result.createdAt), ''],
-        ['General', 'Food Name', result.foodName, ''],
+        ['General', 'Food Name', `"${result.foodName.replace(/"/g, '""')}"`, ''],
         ['General', 'Serving Size', result.servingSize || 'N/A', ''],
         ['General', 'Health Score', `${result.healthMetrics?.healthScore || 'N/A'}`, '/100'],
         ['General', 'Status', result.isHealthy ? 'Healthy Choice' : 'Indulgent', ''],
