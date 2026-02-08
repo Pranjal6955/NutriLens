@@ -133,7 +133,7 @@ export const generatePDF = (result: MealData) => {
         ['Food Name', result.foodName],
         ['Date Analysis', formatDate(result.createdAt)],
         ['Serving Size', result.servingSize || 'N/A'],
-        ['Health Score', `${result.healthMetrics?.healthScore || 'N/A'} / 100`],
+        ['Health Score', `${result.healthMetrics?.healthScore ?? 'N/A'} / 100`],
         ['Status', result.isHealthy ? 'Healthy Choice' : 'Indulgent']
     ];
 
