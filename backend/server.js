@@ -14,14 +14,11 @@ const chatRoute = require('./routes/chat.route');
 const fs = require('fs');
 const chatRoute = require('./routes/chat.route');
 
-
-const fs = require('fs')
-
+const fs = require('fs');
 
 const logger = require('./utils/logger');
 
 const authRoutes = require('./routes/authRoutes');
-
 
 // Validate required environment variables
 const requiredEnvVars = ['GEMINI_API_KEY', 'MONGO_URI', 'JWT_SECRET'];
