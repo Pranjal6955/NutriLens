@@ -1,8 +1,11 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { OAuth2Client } = require('google-auth-library');
 const sendEmail = require('../utils/sendEmail');
 const logger = require('../utils/logger');
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 exports.register = async (req, res) => {
   try {
@@ -25,7 +28,7 @@ exports.register = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await User.create({
+    const newUser = await User.create({
       userName,
       email,
       password: hashedPassword,
@@ -34,7 +37,7 @@ exports.register = async (req, res) => {
     try {
       await sendEmail({
         to: email,
-        subject: 'Welcome to NutriLens – Let’s get started 🚀',
+        subject: "Welcome to NutriLens - Let's get started!",
         text: `Hi ${userName},
 
             Welcome to NutriLens!
@@ -47,12 +50,12 @@ exports.register = async (req, res) => {
                 The NutriLens Team`,
         html: `
         <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-        <h2 style="color: #2c7be5;">Welcome to NutriLens 🎉</h2>
+        <h2 style="color: #2c7be5;">Welcome to NutriLens!</h2>
 
         <p>Hi <strong>${userName}</strong>,</p>
 
         <p>
-            We’re excited to have you on board! Your NutriLens account has been
+            We're excited to have you on board! Your NutriLens account has been
             successfully created.
         </p>
 
@@ -61,7 +64,7 @@ exports.register = async (req, res) => {
         </p>
 
         <p style="margin-top: 20px;">
-            If you didn’t create this account or need any help, feel free to reach
+            If you didn't create this account or need any help, feel free to reach
             out to our support team.
         </p>
 
@@ -82,8 +85,15 @@ exports.register = async (req, res) => {
       logger.warn('Welcome email failed:', emailErr.message);
     }
 
+    logger.info(`New user registered: ${email}`);
+
     return res.status(201).json({
       message: 'Registered successfully',
+      user: {
+        id: newUser._id,
+        email: newUser.email,
+        userName: newUser.userName,
+      },
     });
   } catch (err) {
     logger.error('Registration error:', err);
@@ -157,4 +167,72 @@ exports.logout = (req, res) => {
   });
 
   return res.json({ message: 'Logout successful' });
+};
+
+exports.googleAuth = async (req, res) => {
+  try {
+    const { credential } = req.body;
+
+    if (!credential) {
+      return res.status(400).json({ message: 'Google credential is required' });
+    }
+
+    const ticket = await googleClient.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const { email, name, picture } = payload;
+
+    if (!email) {
+      return res.status(400).json({ message: 'Email not provided by Google' });
+    }
+
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      user = await User.create({
+        userName: name || email.split('@')[0],
+        email,
+        password: await bcrypt.hash(Math.random().toString(36), 10),
+        isGoogleUser: true,
+        avatar: picture,
+      });
+    }
+
+    const token = jwt.sign(
+      {
+        id: user._id,
+        email: user.email,
+        userName: user.userName,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: process.env.JWT_EXPIRE || '1h',
+      }
+    );
+
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 60 * 60 * 1000,
+    });
+
+    return res.json({
+      message: 'Google authentication successful',
+      user: {
+        id: user._id,
+        email: user.email,
+        userName: user.userName,
+        avatar: user.avatar,
+      },
+    });
+  } catch (err) {
+    logger.error('Google auth error:', err);
+    return res.status(500).json({
+      message: 'Google authentication failed. Please try again later.',
+    });
+  }
 };

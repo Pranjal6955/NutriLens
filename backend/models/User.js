@@ -18,6 +18,14 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    isGoogleUser: {
+      type: Boolean,
+      default: false,
+    },
+    avatar: {
+      type: String,
+      default: null,
+    },
   },
   {
     timestamps: true,

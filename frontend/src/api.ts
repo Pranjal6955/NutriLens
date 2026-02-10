@@ -2,6 +2,24 @@ import axios from 'axios';
 
 const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace(/\/+$/, '');
 
+// Create axios instance with auth interceptors
+const apiClient = axios.create({
+  baseURL: API_URL,
+  withCredentials: true,
+});
+
+// Response interceptor to handle 401 errors
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('user');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  },
+);
+
 export interface MealData {
   _id: string;
   foodName: string;
@@ -83,7 +101,7 @@ export const analyzeImage = async (file: File, quantity?: string): Promise<MealD
   }
   formData.append('image', compressedFile);
 
-  const response = await axios.post(`${API_URL}/analyze`, formData, {
+  const response = await apiClient.post('/analyze', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -93,21 +111,21 @@ export const analyzeImage = async (file: File, quantity?: string): Promise<MealD
 };
 
 export const getHistory = async (limit = 20, skip = 0): Promise<HistoryResponse> => {
-  const response = await axios.get(`${API_URL}/history`, {
+  const response = await apiClient.get('/history', {
     params: { limit, skip },
   });
   return response.data;
 };
 
 export const clearHistory = async (): Promise<void> => {
-  await axios.delete(`${API_URL}/history`);
+  await apiClient.delete('/history');
 };
 
 export const savePortionAdjustment = async (
   mealId: string,
   portion: MealData['portionEstimate'],
 ) => {
-  const response = await axios.patch(`${API_URL}/history/${mealId}/portion`, { portion });
+  const response = await apiClient.patch(`/history/${mealId}/portion`, { portion });
   return response.data.data;
 };
 
@@ -131,6 +149,6 @@ export const sendChatMessage = async (
   healthTip?: string;
   info?: string;
 }> => {
-  const response = await axios.post(`${API_URL}/chat`, { message });
+  const response = await apiClient.post('/chat', { message });
   return response.data;
 };
