@@ -1,0 +1,14 @@
+
+> frontend@0.0.0 lint
+> eslint .
+
+
+C:\Open Source Project\NutriLens\frontend\src\utils\exportUtils.ts
+  61:3  error  Insert `ÔÉìÔÅÄ┬À┬À`  prettier/prettier
+  62:1  error  Delete `┬À┬À`    prettier/prettier
+  65:5  error  Delete `┬À┬À`    prettier/prettier
+  66:1  error  Delete `┬À┬À┬À┬À`  prettier/prettier
+
+Ô£û 4 problems (4 errors, 0 warnings)
+  4 errors and 0 warnings potentially fixable with the `--fix` option.
+

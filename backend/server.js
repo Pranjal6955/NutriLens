@@ -105,6 +105,7 @@ app.get('/', (req, res) => {
 });
 
 // Global Error Handler
+// eslint-disable-next-line no-unused-vars
 app.use((err, req, res, _next) => {
   if (err instanceof multer.MulterError) {
     if (err.code === 'LIMIT_FILE_SIZE') {
