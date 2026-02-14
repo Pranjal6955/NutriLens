@@ -9,6 +9,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon server.js",
+    "lint": "eslint .",
     "format": "prettier --write \"**/*.{js,json}\" \"!node_modules\" \"!dist\"",
     "format:check": "prettier --check \"**/*.{js,json}\" \"!node_modules\" \"!dist\"",
     "build": "echo 'Backend uses JavaScript - no build step needed'",
@@ -32,6 +33,7 @@
     "uuid": "^13.0.0"
   },
   "devDependencies": {
+    "eslint": "^8.56.0",
     "nodemon": "^3.1.11",
     "prettier": "^3.7.4"
   }

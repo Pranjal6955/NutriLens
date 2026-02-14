@@ -1,0 +1,176 @@
+
+> frontend@0.0.0 lint
+> eslint .
+
+
+C:\Open Source Project\NutriLens\frontend\src\components\ExportButton.tsx
+  35:20  error  Replace `"relative"` with `'relative'`                                                                                                                                                                                                                                                                                                                                                prettier/prettier
+  38:19  error  Replace `"flex┬Àitems-center┬Àbg-black┬Àhover:bg-brand-primary┬Àtext-brand-primary┬Àhover:text-black┬Àpx-4┬Àpy-2┬Àrounded-xl┬Àtransition-colors┬Àtext-sm┬Àfont-medium┬Àborder┬Àborder-brand-primary/20"` with `'flex┬Àitems-center┬Àbg-black┬Àhover:bg-brand-primary┬Àtext-brand-primary┬Àhover:text-black┬Àpx-4┬Àpy-2┬Àrounded-xl┬Àtransition-colors┬Àtext-sm┬Àfont-medium┬Àborder┬Àborder-brand-primary/20'`  prettier/prettier
+  40:29  error  Replace `"w-4┬Àh-4┬Àmr-2"` with `'w-4┬Àh-4┬Àmr-2'`                                                                                                                                                                                                                                                                                                                                        prettier/prettier
+  42:21  error  Replace `┬ÀclassName={`w-4┬Àh-4┬Àml-2┬Àtransition-transform┬À${isOpen┬À?┬À'rotate-180'┬À:┬À''}`}` with `ÔÉìÔÅÄ┬À┬À┬À┬À┬À┬À┬À┬À┬À┬ÀclassName={`w-4┬Àh-4┬Àml-2┬Àtransition-transform┬À${isOpen┬À?┬À'rotate-180'┬À:┬À''}`}ÔÉìÔÅÄ┬À┬À┬À┬À┬À┬À┬À`                                                                                                                                                                                    prettier/prettier
+  51:23  error  Replace `"absolute┬Àright-0┬Àmt-2┬Àw-48┬Àbg-white┬Àdark:bg-gray-800┬Àrounded-xl┬Àshadow-xl┬Àborder┬Àborder-gray-100┬Àdark:border-gray-700┬Àoverflow-hidden┬Àz-50"` with `'absolute┬Àright-0┬Àmt-2┬Àw-48┬Àbg-white┬Àdark:bg-gray-800┬Àrounded-xl┬Àshadow-xl┬Àborder┬Àborder-gray-100┬Àdark:border-gray-700┬Àoverflow-hidden┬Àz-50'`                                                                            prettier/prettier
+  53:28  error  Replace `"py-1"` with `'py-1'`                                                                                                                                                                                                                                                                                                                                                        prettier/prettier
+  61:29  error  Replace `"w-full┬Àtext-left┬Àpx-4┬Àpy-3┬Àtext-sm┬Àtext-gray-700┬Àdark:text-gray-200┬Àhover:bg-gray-50┬Àdark:hover:bg-gray-700┬Àflex┬Àitems-center┬Àtransition-colors"` with `'w-full┬Àtext-left┬Àpx-4┬Àpy-3┬Àtext-sm┬Àtext-gray-700┬Àdark:text-gray-200┬Àhover:bg-gray-50┬Àdark:hover:bg-gray-700┬Àflex┬Àitems-center┬Àtransition-colors'`                                                                  prettier/prettier
+  63:42  error  Replace `"w-4┬Àh-4┬Àmr-3┬Àtext-brand-primary"` with `'w-4┬Àh-4┬Àmr-3┬Àtext-brand-primary'`                                                                                                                                                                                                                                                                                                  prettier/prettier
+
+C:\Open Source Project\NutriLens\frontend\src\utils\exportUtils.ts
+    1:1   error  Delete `ÔÉìÔÅÄ`                                                                                                                                                prettier/prettier
+    6:1   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+    6:26  error  Unexpected any. Specify a different type                                                                                                                   @typescript-eslint/no-explicit-any
+   11:3   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+   15:1   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+   19:3   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+   20:1   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+   21:3   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+   22:1   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+   23:3   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+   24:3   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+   25:1   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+   26:3   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+   30:3   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+   31:1   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+   59:3   error  Insert `ÔÉìÔÅÄ┬À┬À`                                                                                                                                              prettier/prettier
+   60:5   error  Delete `┬À┬À┬À┬À┬À┬À┬À┬À`                                                                                                                                          prettier/prettier
+   61:1   error  Delete `┬À┬À┬À┬À┬À┬À┬À┬À`                                                                                                                                          prettier/prettier
+   62:9   error  Delete `┬À┬À┬À┬À┬À┬À┬À┬À`                                                                                                                                          prettier/prettier
+   63:1   error  Delete `┬À┬À┬À┬À┬À┬À┬À┬À`                                                                                                                                          prettier/prettier
+   64:1   error  Delete `┬À┬À┬À┬À┬À┬À┬À┬À`                                                                                                                                          prettier/prettier
+   67:1   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+   68:1   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+   72:3   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+   74:1   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+   75:3   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+   76:1   error  Delete `┬À┬À┬À┬À`                                                                                                                                              prettier/prettier
+   77:1   error  Replace `┬À┬À┬À┬À┬À┬À┬À┬À` with `┬À┬À┬À┬À`                                                                                                                             prettier/prettier
+   78:5   error  Delete `┬À┬À┬À┬À`                                                                                                                                              prettier/prettier
+   79:1   error  Replace `┬À┬À┬À┬À┬À┬À┬À┬À` with `┬À┬À┬À┬À`                                                                                                                             prettier/prettier
+   80:1   error  Delete `┬À┬À┬À┬À`                                                                                                                                              prettier/prettier
+   81:1   error  Replace `┬À┬À┬À┬À┬À┬À┬À┬À` with `┬À┬À┬À┬À`                                                                                                                             prettier/prettier
+   83:5   error  Delete `┬À┬À┬À┬À`                                                                                                                                              prettier/prettier
+   84:1   error  Replace `┬À┬À┬À┬À┬À┬À┬À┬À` with `┬À┬À┬À┬À`                                                                                                                             prettier/prettier
+   85:5   error  Delete `┬À┬À┬À┬À`                                                                                                                                              prettier/prettier
+   86:1   error  Replace `┬À┬À┬À┬À┬À┬À┬À┬À` with `┬À┬À┬À┬À`                                                                                                                             prettier/prettier
+   88:1   error  Replace `┬À┬À┬À┬À┬À┬À┬À┬À` with `┬À┬À┬À┬À`                                                                                                                             prettier/prettier
+   89:1   error  Replace `┬À┬À┬À┬À┬À┬À┬À┬À` with `┬À┬À┬À┬À`                                                                                                                             prettier/prettier
+   90:3   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+   92:1   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+   93:1   error  Replace `┬À┬À┬À┬À┬À┬À┬À┬À` with `┬À┬À┬À┬À`                                                                                                                             prettier/prettier
+   94:1   error  Replace `┬À┬À┬À┬À┬À┬À┬À┬À┬À┬À┬À┬À` with `┬À┬À┬À┬À┬À┬À`                                                                                                                       prettier/prettier
+   95:5   error  Delete `┬À┬À┬À┬À`                                                                                                                                              prettier/prettier
+   96:3   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+   98:1   error  Replace `┬À┬À┬À┬À` with `┬À┬À`                                                                                                                                   prettier/prettier
+   99:1   error  Delete `┬À┬À┬À┬À`                                                                                                                                              prettier/prettier
+  100:1   error  Replace `┬À┬À┬À┬À┬À┬À┬À┬À┬À┬À┬À┬À` with `┬À┬À┬À┬À┬À┬À`                                                                                                                       prettier/prettier
+  101:5   error  Delete `┬À┬À┬À┬À`                                                                                                                                              prettier/prettier
+  102:1   error  Replace `┬À┬À┬À┬À` with `┬À┬À`                                                                                                                                   prettier/prettier
+  104:1   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  105:1   error  Delete `┬À┬À┬À┬À`                                                                                                                                              prettier/prettier
+  106:1   error  Replace `┬À┬À┬À┬À┬À┬À┬À┬À┬À┬À┬À┬À` with `┬À┬À┬À┬À┬À┬À`                                                                                                                       prettier/prettier
+  107:5   error  Delete `┬À┬À┬À┬À`                                                                                                                                              prettier/prettier
+  108:1   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  110:3   error  Replace `┬À┬Àconst┬ÀcsvContent┬À=┬Àrows.map(e┬À=>┬Àe.join(",")).join("\n"` with `const┬ÀcsvContent┬À=┬Àrows.map((e)┬À=>┬Àe.join(',')).join('\n'`                       prettier/prettier
+  111:1   error  Replace `┬À┬À┬À┬À` with `┬À┬À`                                                                                                                                   prettier/prettier
+  112:1   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  116:1   error  Replace `┬À┬À┬À┬À` with `┬À┬À`                                                                                                                                   prettier/prettier
+  117:1   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  119:1   error  Replace `┬À┬À┬À┬À` with `┬À┬À`                                                                                                                                   prettier/prettier
+  120:1   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  121:1   error  Replace `┬À┬À┬À┬À` with `┬À┬À`                                                                                                                                   prettier/prettier
+  123:3   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  124:1   error  Replace `┬À┬À┬À┬À` with `┬À┬À`                                                                                                                                   prettier/prettier
+  125:1   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  127:1   error  Replace `┬À┬À┬À┬À` with `┬À┬À`                                                                                                                                   prettier/prettier
+  128:1   error  Replace `┬À┬À┬À┬À` with `┬À┬À`                                                                                                                                   prettier/prettier
+  129:1   error  Replace `┬À┬À┬À┬À┬À┬À┬À┬À` with `┬À┬À┬À┬À`                                                                                                                             prettier/prettier
+  130:1   error  Delete `┬À┬À┬À┬À`                                                                                                                                              prettier/prettier
+  131:1   error  Replace `┬À┬À┬À┬À┬À┬À┬À┬À` with `┬À┬À┬À┬À`                                                                                                                             prettier/prettier
+  132:1   error  Delete `┬À┬À┬À┬À`                                                                                                                                              prettier/prettier
+  133:1   error  Replace `┬À┬À┬À┬À┬À┬À┬À┬À['Status',┬Àresult.isHealthy┬À?┬À'Healthy┬ÀChoice'┬À:┬À'Indulgent']` with `┬À┬À┬À┬À['Status',┬Àresult.isHealthy┬À?┬À'Healthy┬ÀChoice'┬À:┬À'Indulgent'],`  prettier/prettier
+  134:1   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  136:1   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  137:1   error  Replace `┬À┬À┬À┬À┬À┬À┬À┬À` with `┬À┬À┬À┬À`                                                                                                                             prettier/prettier
+  138:1   error  Replace `┬À┬À┬À┬À┬À┬À┬À┬À` with `┬À┬À┬À┬À`                                                                                                                             prettier/prettier
+  139:5   error  Delete `┬À┬À┬À┬À`                                                                                                                                              prettier/prettier
+  140:1   error  Replace `┬À┬À┬À┬À┬À┬À┬À┬À` with `┬À┬À┬À┬À`                                                                                                                             prettier/prettier
+  141:1   error  Replace `┬À┬À┬À┬À┬À┬À┬À┬ÀheadStyles:┬À{┬ÀfillColor:┬À[66,┬À66,┬À66]┬À}` with `┬À┬À┬À┬ÀheadStyles:┬À{┬ÀfillColor:┬À[66,┬À66,┬À66]┬À},`                                              prettier/prettier
+  142:1   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  144:3   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  145:1   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  146:1   error  Delete `┬À┬À┬À┬À`                                                                                                                                              prettier/prettier
+  147:5   error  Delete `┬À┬À┬À┬À`                                                                                                                                              prettier/prettier
+  148:1   error  Delete `┬À┬À┬À┬À`                                                                                                                                              prettier/prettier
+  149:5   error  Replace `┬À┬À┬À┬À['Fat',┬À`${result.macronutrients?.fat┬À||┬Àresult.fat}┬Àg`]` with `['Fat',┬À`${result.macronutrients?.fat┬À||┬Àresult.fat}┬Àg`],`                    prettier/prettier
+  150:1   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  152:1   error  Replace `┬À┬À┬À┬À` with `┬À┬À`                                                                                                                                   prettier/prettier
+  152:26  error  Unexpected any. Specify a different type                                                                                                                   @typescript-eslint/no-explicit-any
+  153:3   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  155:1   error  Replace `┬À┬À┬À┬À` with `┬À┬À`                                                                                                                                   prettier/prettier
+  156:1   error  Replace `┬À┬À┬À┬À┬À┬À┬À┬À` with `┬À┬À┬À┬À`                                                                                                                             prettier/prettier
+  157:1   error  Delete `┬À┬À┬À┬À`                                                                                                                                              prettier/prettier
+  158:1   error  Replace `┬À┬À┬À┬À┬À┬À┬À┬À` with `┬À┬À┬À┬À`                                                                                                                             prettier/prettier
+  159:1   error  Replace `┬À┬À┬À┬À┬À┬À┬À┬À` with `┬À┬À┬À┬À`                                                                                                                             prettier/prettier
+  160:1   error  Replace `┬À┬À┬À┬À┬À┬À┬À┬ÀheadStyles:┬À{┬ÀfillColor:┬À[41,┬À128,┬À185]┬À}` with `┬À┬À┬À┬ÀheadStyles:┬À{┬ÀfillColor:┬À[41,┬À128,┬À185]┬À},`                                          prettier/prettier
+  161:1   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  163:3   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  164:1   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  164:22  error  Unexpected any. Specify a different type                                                                                                                   @typescript-eslint/no-explicit-any
+  165:3   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  166:1   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  167:3   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  168:1   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  169:3   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  170:1   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  171:3   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  173:1   error  Replace `┬À┬À┬À┬ÀfinalY┬À=┬ÀfinalY┬À+┬À10┬À+┬À(splitAnalysis.length┬À*┬À4)` with `┬À┬ÀfinalY┬À=┬ÀfinalY┬À+┬À10┬À+┬ÀsplitAnalysis.length┬À*┬À4`                                   prettier/prettier
+  175:1   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  176:1   error  Delete `┬À┬À┬À┬À`                                                                                                                                              prettier/prettier
+  177:5   error  Delete `┬À┬À┬À┬À`                                                                                                                                              prettier/prettier
+  178:3   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  180:1   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  181:3   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  182:1   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  183:3   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  184:1   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  185:3   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  186:1   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  188:3   error  Replace `┬À┬ÀfinalY┬À=┬ÀfinalY┬À+┬À10┬À+┬À(splitRec.length┬À*┬À4)` with `finalY┬À=┬ÀfinalY┬À+┬À10┬À+┬ÀsplitRec.length┬À*┬À4`                                                 prettier/prettier
+  190:3   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  191:3   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  192:1   error  Replace `┬À┬À┬À┬À┬À┬À┬À┬À` with `┬À┬À┬À┬À`                                                                                                                             prettier/prettier
+  193:1   error  Replace `┬À┬À┬À┬À┬À┬À┬À┬À` with `┬À┬À┬À┬À`                                                                                                                             prettier/prettier
+  194:3   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  196:1   error  Replace `┬À┬À┬À┬À` with `┬À┬À`                                                                                                                                   prettier/prettier
+  197:1   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  198:5   error  Delete `┬À┬À┬À┬À`                                                                                                                                              prettier/prettier
+  199:1   error  Replace `┬À┬À┬À┬À┬À┬À┬À┬À` with `┬À┬À┬À┬À`                                                                                                                             prettier/prettier
+  200:5   error  Delete `┬À┬À┬À┬À`                                                                                                                                              prettier/prettier
+  201:1   error  Replace `┬À┬À┬À┬À┬À┬À┬À┬À` with `┬À┬À┬À┬À`                                                                                                                             prettier/prettier
+  202:1   error  Replace `┬À┬À┬À┬À┬À┬À┬À┬À` with `┬À┬À┬À┬À`                                                                                                                             prettier/prettier
+  203:1   error  Replace `┬À┬À┬À┬À┬À┬À┬À┬À` with `┬À┬À┬À┬À`                                                                                                                             prettier/prettier
+  204:1   error  Replace `┬À┬À┬À┬À┬À┬À┬À┬À┬À┬À┬À┬À` with `┬À┬À┬À┬À┬À┬À`                                                                                                                       prettier/prettier
+  205:1   error  Delete `┬À┬À┬À┬À┬À┬À`                                                                                                                                            prettier/prettier
+  206:1   error  Replace `┬À┬À┬À┬À┬À┬À┬À┬À` with `┬À┬À┬À┬À`                                                                                                                             prettier/prettier
+  207:1   error  Delete `┬À┬À┬À┬À`                                                                                                                                              prettier/prettier
+  208:1   error  Replace `┬À┬À┬À┬À` with `┬À┬À`                                                                                                                                   prettier/prettier
+  210:1   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  211:1   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  212:1   error  Replace `┬À┬À┬À┬À┬À┬À┬À┬À` with `┬À┬À┬À┬À`                                                                                                                             prettier/prettier
+  213:1   error  Delete `┬À┬À┬À┬À┬À┬À`                                                                                                                                            prettier/prettier
+  214:7   error  Delete `┬À┬À┬À┬À┬À┬À`                                                                                                                                            prettier/prettier
+  215:1   error  Replace `┬À┬À┬À┬À┬À┬À┬À┬À` with `┬À┬À┬À┬À`                                                                                                                             prettier/prettier
+  216:1   error  Delete `┬À┬À┬À┬À`                                                                                                                                              prettier/prettier
+  217:1   error  Replace `┬À┬À┬À┬À┬À┬À┬À┬À` with `┬À┬À┬À┬À`                                                                                                                             prettier/prettier
+  218:5   error  Delete `┬À┬À┬À┬À`                                                                                                                                              prettier/prettier
+  219:1   error  Replace `┬À┬À┬À┬À┬À┬À┬À┬À` with `┬À┬À┬À┬À`                                                                                                                             prettier/prettier
+  220:1   error  Replace `┬À┬À┬À┬À┬À┬À┬À┬À` with `┬À┬À┬À┬À`                                                                                                                             prettier/prettier
+  221:1   error  Replace `┬À┬À┬À┬À┬À┬À┬À┬À` with `┬À┬À┬À┬À`                                                                                                                             prettier/prettier
+  222:1   error  Delete `┬À┬À┬À┬À┬À┬À`                                                                                                                                            prettier/prettier
+  223:7   error  Delete `┬À┬À┬À┬À┬À┬À`                                                                                                                                            prettier/prettier
+  224:1   error  Replace `┬À┬À┬À┬À┬À┬À┬À┬À` with `┬À┬À┬À┬À`                                                                                                                             prettier/prettier
+  225:1   error  Replace `┬À┬À┬À┬À` with `┬À┬À`                                                                                                                                   prettier/prettier
+  227:1   error  Delete `┬À┬À`                                                                                                                                                prettier/prettier
+  228:2   error  Insert `;`                                                                                                                                                 prettier/prettier
+
+Ô£û 164 problems (164 errors, 0 warnings)
+  161 errors and 0 warnings potentially fixable with the `--fix` option.
+
