@@ -36,7 +36,7 @@ NutriLens Analysis Report
 Date: ${formatDate(result.createdAt)}
 Food: ${result.foodName}
 Serving Size: ${result.servingSize || 'N/A'}
-Health Score: ${result.healthMetrics?.healthScore || 'N/A'}/100
+Health Score: ${result.healthMetrics?.healthScore ?? 'N/A'}/100
 Status: ${result.isHealthy ? 'Healthy Choice' : 'Indulgent'}
 
 Nutritional Info:
@@ -52,10 +52,14 @@ Recommendation:
 ${result.recommendation}
 
 Benefits:
-${result.healthMetrics?.benefits?.map((b) => `- ${b}`).join('\n') || 'None'}
+${result.healthMetrics?.benefits && result.healthMetrics.benefits.length
+    ? result.healthMetrics.benefits.map((b) => `- ${b}`).join('\n')
+    : 'None'}
 
 Concerns:
-${result.healthMetrics?.concerns?.map((c) => `- ${c}`).join('\n') || 'None'}
+${result.healthMetrics?.concerns && result.healthMetrics.concerns.length
+    ? result.healthMetrics.concerns.map((c) => `- ${c}`).join('\n')
+    : 'None'}
 
 Micronutrients:
 ${
@@ -82,7 +86,6 @@ export const generateCSV = (result: MealData) => {
     ['General', 'Serving Size', result.servingSize || 'N/A', ''],
     ['General', 'Health Score', `${result.healthMetrics?.healthScore || 'N/A'}`, '/100'],
     ['General', 'Status', result.isHealthy ? 'Healthy Choice' : 'Indulgent', ''],
-
     ['Macros', 'Calories', `${result.calories}`, 'kcal'],
     ['Macros', 'Protein', `${result.macronutrients?.protein || result.protein}`, 'g'],
     ['Macros', 'Carbs', `${result.macronutrients?.carbs || result.carbs}`, 'g'],
