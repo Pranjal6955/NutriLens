@@ -6,7 +6,6 @@ const cloudinary = require('cloudinary').v2;
 const Meal = require('../models/Meal');
 const logger = require('../utils/logger');
 const APIKeyManager = require('../utils/apiKeyManager');
-const { chatPrompt, analysisPrompt } = require('../utils/prompts');
 
 // Initialize API Key Manager
 const apiKeyManager = new APIKeyManager();
