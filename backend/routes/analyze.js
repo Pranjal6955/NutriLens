@@ -381,15 +381,15 @@ router.patch('/history/:id/portion', async (req, res) => {
       meal.originalNutrition && meal.originalNutrition.calories
         ? meal.originalNutrition
         : {
-          calories: meal.calories || 0,
-          macronutrients: {
-            protein: meal.macronutrients?.protein ?? meal.protein ?? 0,
-            carbs: meal.macronutrients?.carbs ?? meal.carbs ?? 0,
-            fat: meal.macronutrients?.fat ?? meal.fat ?? 0,
-            fiber: meal.macronutrients?.fiber ?? 0,
-            sugar: meal.macronutrients?.sugar ?? 0,
-          },
-        };
+            calories: meal.calories || 0,
+            macronutrients: {
+              protein: meal.macronutrients?.protein ?? meal.protein ?? 0,
+              carbs: meal.macronutrients?.carbs ?? meal.carbs ?? 0,
+              fat: meal.macronutrients?.fat ?? meal.fat ?? 0,
+              fiber: meal.macronutrients?.fiber ?? 0,
+              sugar: meal.macronutrients?.sugar ?? 0,
+            },
+          };
 
     // Compute multiplier
     let newMultiplier = 1;

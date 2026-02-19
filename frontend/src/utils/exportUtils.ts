@@ -30,6 +30,22 @@ const downloadFile = (blob: Blob, fileName: string) => {
 
 export const generateTXT = (result: MealData) => {
   if (!result) return;
+  const benefits =
+    result.healthMetrics?.benefits && result.healthMetrics.benefits.length
+      ? result.healthMetrics.benefits.map((b) => `- ${b}`).join('\n')
+      : 'None';
+
+  const concerns =
+    result.healthMetrics?.concerns && result.healthMetrics.concerns.length
+      ? result.healthMetrics.concerns.map((c) => `- ${c}`).join('\n')
+      : 'None';
+
+  const micronutrients = result.micronutrients
+    ? Object.entries(result.micronutrients)
+        .map(([k, v]) => `- ${k.replace(/([A-Z])/g, ' $1').trim()}: ${v}`)
+        .join('\n')
+    : 'N/A';
+
   const report = `
 NutriLens Analysis Report
 -------------------------
@@ -52,23 +68,13 @@ Recommendation:
 ${result.recommendation}
 
 Benefits:
-${result.healthMetrics?.benefits && result.healthMetrics.benefits.length
-    ? result.healthMetrics.benefits.map((b) => `- ${b}`).join('\n')
-    : 'None'}
+${benefits}
 
 Concerns:
-${result.healthMetrics?.concerns && result.healthMetrics.concerns.length
-    ? result.healthMetrics.concerns.map((c) => `- ${c}`).join('\n')
-    : 'None'}
+${concerns}
 
 Micronutrients:
-${
-  result.micronutrients
-    ? Object.entries(result.micronutrients)
-        .map(([k, v]) => `- ${k.replace(/([A-Z])/g, ' $1').trim()}: ${v}`)
-        .join('\n')
-    : 'N/A'
-}
+${micronutrients}
   `.trim();
 
   const blob = new Blob([report], { type: 'text/plain' });
