@@ -81,41 +81,56 @@ ${micronutrients}
   downloadFile(blob, getFileName(result.foodName, 'txt'));
 };
 
+const escapeCSV = (field: string | number | undefined | null): string => {
+  if (field === undefined || field === null) return '';
+  const stringField = String(field);
+  if (stringField.includes(',') || stringField.includes('\n') || stringField.includes('"')) {
+    return `"${stringField.replace(/"/g, '""')}"`;
+  }
+  return stringField;
+};
+
 export const generateCSV = (result: MealData) => {
   if (!result) return;
 
   // Define CSV headers and rows
   const rows = [
     ['Category', 'Detail', 'Value', 'Unit'],
-    ['General', 'Date', formatDate(result.createdAt), ''],
-    ['General', 'Food Name', result.foodName, ''],
-    ['General', 'Serving Size', result.servingSize || 'N/A', ''],
-    ['General', 'Health Score', `${result.healthMetrics?.healthScore || 'N/A'}`, '/100'],
-    ['General', 'Status', result.isHealthy ? 'Healthy Choice' : 'Indulgent', ''],
+    ['General', 'Date', escapeCSV(formatDate(result.createdAt)), ''],
+    ['General', 'Food Name', escapeCSV(result.foodName), ''],
+    ['General', 'Serving Size', escapeCSV(result.servingSize || 'N/A'), ''],
+    ['General', 'Health Score', escapeCSV(`${result.healthMetrics?.healthScore || 'N/A'}`), '/100'],
+    ['General', 'Status', escapeCSV(result.isHealthy ? 'Healthy Choice' : 'Indulgent'), ''],
+
     ['Macros', 'Calories', `${result.calories}`, 'kcal'],
     ['Macros', 'Protein', `${result.macronutrients?.protein || result.protein}`, 'g'],
     ['Macros', 'Carbs', `${result.macronutrients?.carbs || result.carbs}`, 'g'],
     ['Macros', 'Fat', `${result.macronutrients?.fat || result.fat}`, 'g'],
 
-    ['Analysis', 'Summary', `"${result.analysis.replace(/"/g, '""')}"`, ''],
-    ['Analysis', 'Recommendation', `"${result.recommendation.replace(/"/g, '""')}"`, ''],
+    ['Analysis', 'Summary', escapeCSV(result.analysis), ''],
+    ['Analysis', 'Recommendation', escapeCSV(result.recommendation), ''],
   ];
 
   if (result.healthMetrics?.benefits) {
     result.healthMetrics.benefits.forEach((b, i) => {
-      rows.push(['Benefits', `Benefit ${i + 1}`, `"${b.replace(/"/g, '""')}"`, '']);
+      rows.push(['Benefits', `Benefit ${i + 1}`, escapeCSV(b), '']);
     });
   }
 
   if (result.healthMetrics?.concerns) {
     result.healthMetrics.concerns.forEach((c, i) => {
-      rows.push(['Concerns', `Concern ${i + 1}`, `"${c.replace(/"/g, '""')}"`, '']);
+      rows.push(['Concerns', `Concern ${i + 1}`, escapeCSV(c), '']);
     });
   }
 
   if (result.micronutrients) {
     Object.entries(result.micronutrients).forEach(([key, value]) => {
-      rows.push(['Micronutrients', key.replace(/([A-Z])/g, ' $1').trim(), `${value}`, 'mg']);
+      rows.push([
+        'Micronutrients',
+        escapeCSV(key.replace(/([A-Z])/g, ' $1').trim()),
+        `${value}`,
+        'mg',
+      ]);
     });
   }
 

@@ -1,0 +1,13 @@
+
+> frontend@0.0.0 lint
+> eslint .
+
+
+C:\Open Source Project\NutriLens\frontend\src\utils\exportUtils.ts
+   45:7  error  Insert `┬À┬À`                                                                                                                                                                                                                                       prettier/prettier
+   46:1  error  Insert `┬À┬À`                                                                                                                                                                                                                                       prettier/prettier
+  102:6  error  Replace `ÔÉìÔÅÄ┬À┬À┬À┬À┬À┬À'General',ÔÉìÔÅÄ┬À┬À┬À┬À┬À┬À'Health┬ÀScore',ÔÉìÔÅÄ┬À┬À┬À┬À┬À┬ÀescapeCSV(`${result.healthMetrics?.healthScore┬À||┬À'N/A'}`),ÔÉìÔÅÄ┬À┬À┬À┬À┬À┬À'/100',ÔÉìÔÅÄ┬À┬À┬À┬À` with `'General',┬À'Health┬ÀScore',┬ÀescapeCSV(`${result.healthMetrics?.healthScore┬À||┬À'N/A'}`),┬À'/100'`  prettier/prettier
+
+Ô£û 3 problems (3 errors, 0 warnings)
+  3 errors and 0 warnings potentially fixable with the `--fix` option.
+
