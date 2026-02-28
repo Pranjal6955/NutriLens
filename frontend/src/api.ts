@@ -54,10 +54,9 @@ export interface MealData {
     benefits: string[];
     concerns: string[];
   };
-  // flattened properties for backward compatibility or direct access if needed
-  fat?: number; // legacy
-  protein?: number; // legacy
-  carbs?: number; // legacy
+  fat?: number;
+  protein?: number;
+  carbs?: number;
   analysis: string;
   recommendation: string;
   imagePath: string;
@@ -71,6 +70,18 @@ export interface HistoryResponse {
     limit: number;
     skip: number;
   };
+}
+
+export interface Recipe {
+  title: string;
+  prepTime: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  ingredients: string[];
+  instructions: string[];
+  tags: string[];
 }
 
 import { compressImage } from './utils/imageOptimizer';
@@ -133,4 +144,9 @@ export const sendChatMessage = async (
 }> => {
   const response = await axios.post(`${API_URL}/chat`, { message });
   return response.data;
+};
+
+export const getRecommendations = async (): Promise<Recipe[]> => {
+  const response = await axios.get(`${API_URL}/recommendations`);
+  return response.data.recipes;
 };

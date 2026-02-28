@@ -3,24 +3,17 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-
-const app = express();
-app.use(cookieParser());
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const multer = require('multer');
 const path = require('path');
-const chatRoute = require('./routes/chat.route');
 const fs = require('fs');
-const chatRoute = require('./routes/chat.route');
-
-const fs = require('fs');
-
 const logger = require('./utils/logger');
-
 const authRoutes = require('./routes/authRoutes');
+const chatRoute = require('./routes/chat.route');
 
-// Validate required environment variables
+const app = express();
+
 const requiredEnvVars = ['GEMINI_API_KEY', 'MONGO_URI', 'JWT_SECRET'];
 for (const envVar of requiredEnvVars) {
   if (!process.env[envVar]) {
@@ -31,25 +24,21 @@ for (const envVar of requiredEnvVars) {
 
 const PORT = process.env.PORT || 5000;
 
-// Security middleware
 app.use(helmet());
 
-// Rate limiting
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  windowMs: 15 * 60 * 1000,
+  max: 100,
   message: 'Too many requests from this IP',
 });
 app.use(limiter);
 
-// Stricter rate limit for upload endpoint
 const uploadLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 10, // 10 uploads per 15 minutes
+  max: 10,
   message: 'Upload rate limit exceeded',
 });
 
-// CORS configuration
 const allowedOrigins = (
   process.env.CORS_ALLOWED_ORIGINS ||
   'http://localhost:3000,http://localhost:5173'
@@ -60,7 +49,6 @@ const allowedOrigins = (
 
 const corsOptions = {
   origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
 
     if (
@@ -89,7 +77,7 @@ app.use(cookieParser());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/api/auth', authRoutes);
-// Ensure uploads directory exists
+
 const uploadsDir = path.join(__dirname, 'uploads');
 try {
   if (!fs.existsSync(uploadsDir)) {
@@ -100,15 +88,16 @@ try {
   process.exit(1);
 }
 
-// Routes
 const analyzeRoutes = require('./routes/analyze');
+const recommendationsRoutes = require('./routes/recommendations');
+
 app.use('/api', uploadLimiter, analyzeRoutes);
+app.use('/api', recommendationsRoutes);
 
 app.get('/', (req, res) => {
   res.send('NutriLens Backend is running');
 });
 
-// Global Error Handler
 app.use((err, req, res, _next) => {
   if (err instanceof multer.MulterError) {
     if (err.code === 'LIMIT_FILE_SIZE') {
@@ -129,7 +118,6 @@ app.use((err, req, res, _next) => {
   res.status(500).json({ error: 'Internal server error' });
 });
 
-// Database Connection and Server Start
 const connectDB = require('./config/db');
 
 const startServer = async () => {

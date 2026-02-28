@@ -5,6 +5,7 @@ import { Navbar } from './components/Navbar';
 import { HistorySidebar } from './components/HistorySidebar';
 import { Home } from './pages/Home';
 import { Analysis } from './pages/Analysis';
+import { Recipes } from './pages/Recipes';
 import { getHistory, clearHistory } from './api';
 import type { MealData } from './api';
 import Footer from './components/Footer';
@@ -29,7 +30,6 @@ const App: React.FC = () => {
 
     fetchHistory();
 
-    // Listen for history updates from other components
     const handleHistoryUpdate = () => {
       fetchHistory();
     };
@@ -51,15 +51,14 @@ const App: React.FC = () => {
 
   return (
     <div className='min-h-screen flex flex-col transition-colors duration-300'>
-      {/* Navbar */}
       <Navbar showHistory={showHistory} setShowHistory={setShowHistory} />
 
-      {/* Main Content */}
       <main className='flex-1 max-w-4xl mx-auto px-4 pt-32'>
         <AnimatePresence mode='wait'>
           <Routes location={location} key={location.pathname}>
             <Route path='/' element={<Home />} />
             <Route path='/analysis' element={<Analysis />} />
+            <Route path='/recipes' element={<Recipes />} />
           </Routes>
         </AnimatePresence>
 
@@ -75,7 +74,6 @@ const App: React.FC = () => {
         />
       </main>
 
-      {/* Footer */}
       <Footer />
       <Chatbot />
       <ScrollToTop />

@@ -1,5 +1,6 @@
-import { History } from 'lucide-react';
+import { History, UtensilsCrossed } from 'lucide-react';
 import { FaGithub } from 'react-icons/fa6';
+import { useNavigate } from 'react-router-dom';
 import { ThemeToggle } from './ThemeToggle';
 
 interface NavbarProps {
@@ -8,10 +9,12 @@ interface NavbarProps {
 }
 
 export const Navbar = ({ showHistory, setShowHistory }: NavbarProps) => {
+  const navigate = useNavigate();
+
   return (
     <nav className='fixed top-0 w-full z-50 bg-transparent backdrop-blur-md border-b border-[var(--glass-border)] transition-colors duration-300'>
       <div className='max-w-7xl mx-auto px-4 h-16 flex items-center justify-between'>
-        <div className='flex items-center space-x-2'>
+        <div className='flex items-center space-x-2 cursor-pointer' onClick={() => navigate('/')}>
           <img
             src='/Nutrilens_logo.png'
             alt='NutriLens Logo'
@@ -22,7 +25,20 @@ export const Navbar = ({ showHistory, setShowHistory }: NavbarProps) => {
           </span>
         </div>
         <div className='flex items-center space-x-4'>
-          {/* Star our Repo CTA */}
+          <button
+            onClick={() => navigate('/recipes')}
+            className='hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-full
+               border border-[var(--glass-border)]
+               text-sm font-medium
+               text-gray-700 dark:text-gray-300
+               transition-all duration-300
+               hover:bg-brand-primary/10 hover:border-brand-primary/30
+               hover:text-brand-primary hover:scale-105'
+          >
+            <UtensilsCrossed className='text-base w-4 h-4' />
+            Recipes
+          </button>
+
           <a
             href='https://github.com/Pranjal6955/NutriLens/'
             target='_blank'
